@@ -16,11 +16,14 @@ function AuthenticateWithDiscordButton() {
 
 
 export function redirectToDiscordAuth() {
+    const baseRedirectLink = 'http://localhost:5000/api/v1/auth/redirect'
     const randomString: string = generateRandomString()
     localStorage.setItem('oauth-string', randomString)
+    // const redirectURL = `${baseRedirectLink}&state=${btoa(randomString)}`
+    const redirectURL = `${baseRedirectLink}`
 
+    window.location.assign(redirectURL)
     // TODO remove this hardcode and take it in as an .env
-    // window.location.href = process.env.DISCORD_REDIRECT_URI;
 }
 
 

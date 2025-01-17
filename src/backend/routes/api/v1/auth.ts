@@ -67,7 +67,7 @@ router.get('/login', async (req, res) => {
 
 
 router.get('/redirect', (req, res) => {
-    
+    res.redirect('https://discord.com/oauth2/authorize?client_id=1093586781703786526&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fv1%2Fauth%2Flogin&scope=identify')
 })
 
 

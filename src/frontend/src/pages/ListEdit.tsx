@@ -105,8 +105,6 @@ function ListForm({adminGroups, savedEndpoints}: formProps) {
         if (!markedEndpoint.savedToDB) {
             setEndpointData(endpointData.splice(index, 1))
         }
-
-
     }
 
     async function onSubmit(e: FormEvent<HTMLFormElement>) {

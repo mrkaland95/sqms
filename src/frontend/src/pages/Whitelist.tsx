@@ -9,6 +9,7 @@ import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {IAdminGroup} from "./AdminGroups";
 import {getUsersWhitelist, postAdminGroups, postUserWhitelists} from "../utils/fetch";
+import {nanoid} from "nanoid";
 
 
 function Whitelist() {
@@ -57,121 +58,126 @@ function Whitelist() {
 }
 
 
-function WhiteListForms({whitelist, whitelistSlots}: WhitelistFormProps) {
-    const [whitelistRows, setWhitelistRows] = useState<WhitelistRow[]>([])
+function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
+    const [whitelistRows, setWhitelistRows] = useState<WhitelistRow[]>([]);
 
     useEffect(() => {
-        let slots: WhitelistRow[] = []
+        let slots: WhitelistRow[] = [];
         for (let i = 0; i < whitelist.length || i < whitelistSlots; i++) {
-            let row: WhitelistRow = { steamID: '', name: '' }
-            const steamID = whitelist[i]?.steamID
-            const name = whitelist[i]?.name
-            // We only want to store the name if there is a steamID
+            let row: WhitelistRow = { steamID: '', name: '', id: nanoid(), whitelistEnabled: true };
+            const steamID = whitelist[i]?.steamID;
+            const name = whitelist[i]?.name;
+
             if (steamID) {
-                row.steamID = steamID
+                row.steamID = steamID;
                 if (name) {
-                    row.name = name
+                    row.name = name;
                 }
             }
-            slots.push(row)
-            setWhitelistRows([...slots])
+            slots.push(row);
         }
-    }, [whitelist, whitelistSlots])
-
+        setWhitelistRows(slots); // Update state outside the loop
+    }, [whitelist, whitelistSlots]);
 
     function handleInputChange(index: number, field: 'steamID' | 'name', value: string) {
-        const updatedRows = [...whitelistRows]
+        const updatedRows = [...whitelistRows];
         updatedRows[index][field] = value;
-        setWhitelistRows(updatedRows)
+        setWhitelistRows(updatedRows);
     }
-
 
     function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
         onFormSubmit(whitelistRows);
     }
 
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
+    function handleDragEnd(event: any) {
+        const { active, over } = event;
 
-    if (active.id !== over.id) {
-      const oldIndex = whitelistRows.findIndex(row => row.steamID === active.id);
-      const newIndex = whitelistRows.findIndex(row => row.steamID === over.id);
+        if (active.id !== over.id) {
+            const oldIndex = whitelistRows.findIndex((row) => row.id === active.id);
+            const newIndex = whitelistRows.findIndex((row) => row.id === over.id);
 
-      setWhitelistRows((rows) => arrayMove(rows, oldIndex, newIndex));
+            setWhitelistRows((rows) => arrayMove(rows, oldIndex, newIndex));
+        }
     }
-  }
 
-  return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={whitelistRows.map((row) => row.steamID)}>
-          <form onSubmit={handleSubmit}>
-          {whitelistRows.map((row, index) => (
-            <SortableRow
-              key={index.toString()}
-              id={row.steamID}
-              row={row}
-              index={index}
-              onInputChange={handleInputChange}
-            />
-          ))}
-          <div className={"whitelist-container button-wrapper"}>
-            <button type={"submit"} style={{ marginTop: '20px' }} className={"default-button"} title={"Submit your steamIDs to our systems"}>
-                Submit
-            </button>
-            <button type={"button"} style={{ marginTop: '20px'}} className={"default-button"} title={"Validate IDs"}>
-                Validate IDs
-            </button>
-          </div>
-        </form>
-      </SortableContext>
-    </DndContext>
-  );
+    return (
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={whitelistRows.map((row) => row.id)}>
+                <form onSubmit={handleSubmit}>
+                    {whitelistRows.map((row, index) => (
+                        <SortableRow
+                            key={row.id} // Use unique `id` as key
+                            id={row.id} // Use unique `id` for sorting
+                            row={row}
+                            index={index}
+                            onInputChange={handleInputChange}
+                        />
+                    ))}
+                    <div className={"whitelist-container button-wrapper"}>
+                        <button
+                            type={"submit"}
+                            style={{ marginTop: '20px' }}
+                            className={"default-button"}
+                            title={"Submit your steamIDs to our systems"}
+                        >
+                            Submit
+                        </button>
+                        <button
+                            type={"button"}
+                            style={{ marginTop: '20px' }}
+                            className={"default-button"}
+                            title={"Validate IDs"}
+                        >
+                            Validate IDs
+                        </button>
+                    </div>
+                </form>
+            </SortableContext>
+        </DndContext>
+    );
 }
 
 
 function SortableRow({ id, row, index, onInputChange }: any) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
 
-  return (
-    <div
-      ref={setNodeRef}
-      className={"whitelist-container row-box"}
-      style={{ ...style}}
-      {...attributes}
-    >
-      <span {...listeners} style={{ cursor: 'grab', marginRight: '10px' }}>
-          ☰
-      </span>
-      <input
-        type="text"
-        inputMode={"numeric"}
-        pattern={"[0-9]+"}
-        value={row.steamID}
-        onChange={(e) => onInputChange(index, 'steamID', e.target.value)}
-        placeholder={"Enter SteamID"}
-        maxLength={17}
-        className={"steam-id-input"}
-      />
-
-      <input
-        type="text"
-        value={row.name}
-        onChange={(e) => onInputChange(index, 'name', e.target.value)}
-        placeholder="Enter Optional Name"
-        maxLength={50}
-        className={"steam-id-input"}
-      />
-    </div>
-  );
+    return (
+        <div
+            ref={setNodeRef}
+            className={"whitelist-container row-box"}
+            style={{ ...style }}
+            {...attributes}
+        >
+            <span {...listeners} style={{ cursor: 'grab', marginRight: '10px' }}>
+                ☰
+            </span>
+            <input
+                type="text"
+                inputMode={"numeric"}
+                pattern={"[0-9]+"}
+                value={row.steamID}
+                onChange={(e) => onInputChange(index, 'steamID', e.target.value)}
+                placeholder={"Enter SteamID"}
+                maxLength={17}
+                className={"steam-id-input"}
+            />
+            <input
+                type="text"
+                value={row.name}
+                onChange={(e) => onInputChange(index, 'name', e.target.value)}
+                placeholder="Enter Optional Name"
+                maxLength={50}
+                className={"steam-id-input"}
+            />
+        </div>
+    );
 }
-
-
 
 //
 //     // TODO this wills end a post request to the server with the steamID, which will then send an API request to steam to see if the steamID is valid.
@@ -261,18 +267,24 @@ export interface IPrivilegedRole {
     Enabled: boolean
 }
 
+
+
 type WhitelistFormProps = {
-    whitelist: WhitelistRow[]
+    whitelist: Whitelist[]
     whitelistSlots: number,
 }
 
 
-export type WhitelistRow = {
+export type Whitelist = {
     steamID: string
     name?: string
 }
 
 
+export type WhitelistRow = Whitelist & {
+    id: string;
+    whitelistEnabled: boolean
+}
 
 
 export default Whitelist

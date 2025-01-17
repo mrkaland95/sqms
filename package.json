@@ -9,7 +9,10 @@
     "type": "git",
     "url": "https://github.com/mrkaland95/Squad-whitelist-web-server.git"
   },
-  "workspaces": ["backend", "frontend"],
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "keywords": [
     "Squad",
     "Management",
@@ -24,5 +27,8 @@
   },
   "devDependencies": {
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "nanoid": "^5.0.9"
   }
 }

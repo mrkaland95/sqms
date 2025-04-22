@@ -109,3 +109,11 @@ Element used to fill the space between the collapse and org icons, and the login
   object-fit: cover;
   border-radius: 50%;
 }
+
+.logged-in-dropdown-menu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /*padding-right: 1rem;*/
+  /*width: 100%;*/
+}

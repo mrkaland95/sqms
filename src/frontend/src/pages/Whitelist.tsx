@@ -40,7 +40,7 @@ function Whitelist() {
             <div className={"active-days-container"}>
                     <p><em>
                         Some discord roles may only get whitelist on certain days<br/>
-                        For you, they are the following:
+                        in your case, they are the following:
                     </em></p>
                 {activeDaysList.map((day) => (
                     <p style={{padding: '0.3rem 0rem'}}><b>{day}</b></p>
@@ -76,7 +76,7 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
             }
             slots.push(row);
         }
-        setWhitelistRows(slots); // Update state outside the loop
+        setWhitelistRows(slots);
     }, [whitelist, whitelistSlots]);
 
     function handleInputChange(index: number, field: 'steamID' | 'name', value: string) {
@@ -107,8 +107,8 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
                 <form onSubmit={handleSubmit}>
                     {whitelistRows.map((row, index) => (
                         <SortableRow
-                            key={row.id} // Use unique `id` as key
-                            id={row.id} // Use unique `id` for sorting
+                            key={row.id}
+                            id={row.id}
                             row={row}
                             index={index}
                             onInputChange={handleInputChange}

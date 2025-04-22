@@ -22,6 +22,7 @@ function Sidebar({open}: SideBarProps) {
                     {isAuthenticated && (
                         <SidebarDivider/>
                     )}
+
                     {isAuthenticated && (
                         <SidebarDropdown buttonText={"User"} icon={<FaUser/>} openState={dropdownState}>
                             <SidebarAnchor buttonText={"Profile"} href={"/profile"}/>

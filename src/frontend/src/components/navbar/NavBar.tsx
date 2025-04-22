@@ -72,8 +72,8 @@ function LoggedInDropdownMenu() {
     return (
     <ul>
         <div className={`logged-in-dropdown-menu ${menuOpen ? 'open' : ''}`}>
-            <div>{user?.discordGlobalName}</div>
-            <button style={{width: imageSize, height: imageSize}} className={`nav-bar-user-button ${menuOpen ? 'open' : ''}`}>
+            <div style={{paddingRight: '1rem', color: "white"}}>{user?.discordGlobalName}</div>
+            <button style={{width: imageSize, height: imageSize}} className={`nav-bar-user-button ${menuOpen ? 'open' : ''}`} onClick={() => toggleMenu()}>
                 <img src={defaultDiscordLogo} alt={"Default discord logo"} className={"nav-bar-user-image"}></img>
             </button>
         </div>

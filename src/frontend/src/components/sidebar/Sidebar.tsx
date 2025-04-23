@@ -24,8 +24,8 @@ function Sidebar({open}: SideBarProps) {
                     )}
 
                     {isAuthenticated && (
-                        <SidebarDropdown buttonText={"User"} icon={<FaUser/>} openState={dropdownState}>
-                            <SidebarAnchor buttonText={"Profile"} href={"/profile"}/>
+                        <SidebarDropdown buttonText={"Your Profile"} icon={<FaUser/>} openState={dropdownState}>
+                            {/*<SidebarAnchor buttonText={"Profile"} href={"/profile"}/>*/}
                             <SidebarAnchor buttonText={"User"} href={"/user"}/>
                             <SidebarAnchor buttonText={"Whitelist"} href={"/whitelist"}/>
                         </SidebarDropdown>
@@ -34,10 +34,20 @@ function Sidebar({open}: SideBarProps) {
                     <SidebarDivider/>
 
                     {user?.isAdmin && (
-                        <SidebarDropdown buttonText={"In-game Permissions"} icon={<RiComputerFill/>} openState={dropdownState}>
+                        <SidebarDropdown buttonText={"Game Server Permissions"} icon={<RiComputerFill/>} openState={dropdownState}>
                             <SidebarAnchor buttonText={"Admin Groups"} href={"/admingroups"}/>
                             <SidebarAnchor buttonText={"Discord Role Mapping"} href={"/rolesedit"}/>
                             <SidebarAnchor buttonText={"List Endpoints"} href={"/listsedit"}/>
+                        </SidebarDropdown>
+                    )}
+
+                    {isAuthenticated && (
+                        <SidebarDivider/>
+                    )}
+
+                    {user?.isAdmin && (
+                        <SidebarDropdown buttonText={"Website Management"}>
+                            <SidebarAnchor buttonText={"Roles"} href={"/role-management"}/>
                         </SidebarDropdown>
                     )}
                 </ul>
@@ -94,7 +104,7 @@ function SidebarDropdown({buttonText, children, icon, openState}: SideBarDropDow
 function SidebarAnchor({buttonText, icon, href}: SideBarAnchorProps) {
     return (
         <li style={{border: 'none', margin: 'none', padding: 'none'}}>
-            <div className={"sidebar-element-wrapper-new"}>
+            <div className={"sidebar-element-wrapper-new"} title={buttonText}>
                 <a href={href}>
                     <span className={"sidebar-element-wrapper-new icon"}>{icon}</span>
                     <span className={"sidebar-element-wrapper-new text"}>{buttonText}</span>

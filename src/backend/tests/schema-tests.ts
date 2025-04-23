@@ -1,5 +1,5 @@
 import * as mongoose from "mongoose";
-import {AdminGroupsDB, DiscordUsersDB, InGameAdminPermissions, ListsDB, RolesDB, WeekDays} from "../schema";
+import {AdminGroupsDB, DiscordUsersDB, InGameAdminPermissions, ListsDB, RolesDB, WeekDays} from "../database";
 
 const connectionString = "mongodb://127.0.0.1:27017/whitelist-v2-throwaway"
 

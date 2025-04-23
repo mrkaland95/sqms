@@ -1,12 +1,12 @@
 import {useQueries} from "@tanstack/react-query";
 import {getAdminGroups, getListEndpoints, postListEndpoints} from "../utils/fetch";
 import React, {ChangeEvent, FormEvent, useEffect, useState} from "react";
-import {AdminGroup, ListEndpoint} from "../../../shared-types/types";
+import {AdminGroup, ListEndpoint} from "../../../shared-types/shared-types";
 import ToggleButton from "../components/Toggle-Button";
 import Swal from "sweetalert2";
 import {Dropdown, DropdownButton, DropdownMenu, DropdownToggle} from "react-bootstrap";
-import ExpandableDropdown from "../components/ExpandableDropdown";
-import CustomDropDownMenu, {CustomDropDownItem} from "../components/CustomDropDownMenu";
+import ExpandableDropdown from "../components/dropdowns/ExpandableDropdown";
+import CustomDropDownMenu, {CustomDropDownItem} from "../components/dropdowns/CustomDropDownMenu";
 import AdminGroups from "./AdminGroups";
 import DeleteButton from "../components/delete-button/DeleteButton";
 
@@ -37,6 +37,10 @@ function ListEdit() {
     </div>)
 }
 
+/**
+ * Component to view the links of saved lists.
+ * @constructor
+ */
 function ViewLists() {
     return (
     <>

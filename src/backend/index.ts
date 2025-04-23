@@ -11,7 +11,7 @@ import {
 } from "./cache";
 import mongoose from "mongoose";
 import {Logger, LoggingLevel} from "./logger";
-import {initializeWhitelistGroup} from "./schema";
+import {initializeWhitelistGroup} from "./database";
 
 
 /*

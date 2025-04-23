@@ -9,7 +9,7 @@ import {
     postPrivilegedDiscordRoles
 } from "../utils/fetch";
 import Swal from "sweetalert2";
-import {AdminGroup, DiscordRole, PrivilegedRole} from "../../../shared-types/types";
+import {AdminGroup, DiscordRole, PrivilegedRole} from "../../../shared-types/shared-types";
 
 
 

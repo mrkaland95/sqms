@@ -59,7 +59,7 @@ function Whitelist() {
 
 
 function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
-    const [whitelistRows, setWhitelistRows] = useState<WhitelistRow[]>([]);
+    const [whitelists, setWhitelists] = useState<WhitelistRow[]>([]);
 
     useEffect(() => {
         let slots: WhitelistRow[] = [];
@@ -76,37 +76,37 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
             }
             slots.push(row);
         }
-        setWhitelistRows(slots);
+        setWhitelists(slots);
     }, [whitelist, whitelistSlots]);
 
     function handleInputChange(index: number, field: 'steamID' | 'name', value: string) {
-        const updatedRows = [...whitelistRows];
+        const updatedRows = [...whitelists];
         updatedRows[index][field] = value;
-        setWhitelistRows(updatedRows);
+        setWhitelists(updatedRows);
     }
 
     function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
-        onFormSubmit(whitelistRows);
+        onFormSubmit(whitelists);
     }
 
     function handleDragEnd(event: any) {
         const { active, over } = event;
 
         if (active.id !== over.id) {
-            const oldIndex = whitelistRows.findIndex((row) => row.id === active.id);
-            const newIndex = whitelistRows.findIndex((row) => row.id === over.id);
+            const oldIndex = whitelists.findIndex((row) => row.id === active.id);
+            const newIndex = whitelists.findIndex((row) => row.id === over.id);
 
-            setWhitelistRows((rows) => arrayMove(rows, oldIndex, newIndex));
+            setWhitelists((rows) => arrayMove(rows, oldIndex, newIndex));
         }
     }
 
     return (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={whitelistRows.map((row) => row.id)}>
+            <SortableContext items={whitelists.map((row) => row.id)}>
                 <form onSubmit={handleSubmit}>
-                    {whitelistRows.map((row, index) => (
-                        <SortableRow
+                    {whitelists.map((row, index) => (
+                        <SortableWhitelistRow
                             key={row.id}
                             id={row.id}
                             row={row}
@@ -139,7 +139,7 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
 }
 
 
-function SortableRow({ id, row, index, onInputChange }: any) {
+function SortableWhitelistRow({ id, row, index, onInputChange }: any) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
     const style = {
@@ -239,7 +239,7 @@ async function onFormSubmit(data: WhitelistRow[]) {
     const res = await postUserWhitelists(data)
 
     if (res.status == 200 && res.data.success) {
-        await Swal.fire("Sucessfully installed IDs", "", "success")
+        await Swal.fire("Successfully updated your whitelisted IDs!", "", "success")
     } else {
         // TODO add modal here
         console.log("Something went wrong when sending steamIDs")

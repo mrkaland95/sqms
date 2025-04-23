@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {isAuthenticated} from "../../utils/utils";
-import {ListsDB} from "../../../schema";
-import {ListEndpoint} from "../../../../shared-types/types";
+import {ListsDB} from "../../../database";
+import {ListEndpoint} from "../../../../shared-types/shared-types";
 import {defaultLogger} from "../../../logger";
 import {refreshListCache} from "../../../cache";
 

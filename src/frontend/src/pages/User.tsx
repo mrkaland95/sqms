@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import steamLogo from '../public/steam-icon-wide.png'
 import {getAdminGroups, getUserSteamID, postUserSteamID} from "../utils/fetch";
 import {useQuery} from "@tanstack/react-query";
+import {DiscordUser, UserResponseData} from "../../../shared-types/shared-types";
 
 
 axios.defaults.withCredentials = true
@@ -26,22 +27,19 @@ function User() {
     if (error) return <p>Unable to retrieve user</p>;
     if (!data) return <p>Something went wrong when loading your whitelist data</p>
 
-
     return (
     <div className={"user-container"}>
         <h1>
-        User "PLACEHOLDER FOR DISCORD NAME HERE"
+        User "{data.data.DiscordName}"
         </h1>
         <br/>
         <h3>
-            This page is used for linking the logged in discord account to a steamID. <br/>
+            This page page is used for linking your discord account to your SteamID. You may write it manually, or authenticate yourself via Steam.<br/>
+            Some features may require you to be authenticated via Steam. <br/>
         </h3>
         <br/>
-        <p style={{paddingBottom: '1rem'}}>
-            Certain features may require you to have authenticated yourself with Steam. <br/>
-        </p>
         <p>
-            The steamID can then be used to receive in-game whitelist, or admin permissions, if applicable.
+            If applicable, your steamID can be used to receive Squad whitelist, provided you have
         </p>
         <b/>
         <UserForm userData={data.data}></UserForm>
@@ -73,7 +71,7 @@ function UserForm({userData}: any) {
             return
         }
 
-        await Swal.fire("Sucessfully installed unlinked ID", "", "success")
+        await Swal.fire("Successfully updated personal SteamID(unlinked)", "", "success")
     }
 
     return (
@@ -83,7 +81,7 @@ function UserForm({userData}: any) {
                     <input
                         className={"steam-id-input"}
                         type={"text"}
-                        value={user.UserID64?.steamID}
+                        value={user.UserID64?.steamID && user.UserID64?.steamID}
                         onChange={(e) => {
                             const newUser = {...user}
 

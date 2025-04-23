@@ -1,20 +1,20 @@
 import React, {useState} from 'react';
-import '../css/styles.css';
-import '../css/table.css'
-import '../css/globals.css'
-import Home from "../pages/Home";
+import './css/styles.css';
+import './css/table.css'
+import './css/globals.css'
+import Home from "./pages/Home";
 import {Navigate, Route, Routes} from "react-router-dom";
-import Profile from "../pages/Profile";
-import User from "../pages/User";
-import Whitelist from "../pages/Whitelist";
+import Profile from "./pages/Profile";
+import User from "./pages/User";
+import Whitelist from "./pages/Whitelist";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import AdminGroups from "../pages/AdminGroups";
-import RoleEdit from "../pages/RoleEdit";
-import ListEdit from "../pages/ListEdit";
-import SidebarNew from "./sidebar/Sidebar";
-import {NavBar} from "./navbar/NavBar";
-import AuthProvider, {useAuth} from "./AuthProvider";
-import user from "../pages/User";
+import AdminGroups from "./pages/AdminGroups";
+import RoleEdit from "./pages/RoleEdit";
+import ListEdit from "./pages/ListEdit";
+import SidebarNew from "./components/sidebar/Sidebar";
+import {NavBar} from "./components/navbar/NavBar";
+import AuthProvider, {useAuth} from "./components/AuthProvider";
+import user from "./pages/User";
 
 
 const queryClient = new QueryClient();

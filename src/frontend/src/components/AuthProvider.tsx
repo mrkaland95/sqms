@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import {fetchUserData} from "../utils/fetch";
-import {UserResponseData} from "../../../shared-types/types";
+import {UserResponseData} from "../../../shared-types/shared-types";
 
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);

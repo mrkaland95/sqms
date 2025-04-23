@@ -2,7 +2,7 @@ import * as mongoose from "mongoose";
 import { Document } from "mongoose";
 import {defaultLogger} from "./logger";
 import {randomUUID} from "node:crypto";
-import {ListEndpoint} from "../shared-types/types";
+import {DiscordRole, ListEndpoint, WebsiteRole} from "../shared-types/shared-types";
 
 
 /*
@@ -81,18 +81,16 @@ export interface ILog extends Document {
     MessageType?: string,
 }
 
-export interface DiscordRole {
-    RoleID: string,
-    RoleName: string,
-    GuildID: string
-}
-
 
 export interface IDiscordRole extends DiscordRole, Document {
 }
 
 export interface IAPIKey extends Document {
     APIKey: string
+}
+
+export interface IWebsiteRole extends WebsiteRole, Document {
+
 }
 
 
@@ -204,6 +202,10 @@ const loggingSchema = new mongoose.Schema<ILog>({
         timestamps: true
     }
 )
+// Represents roles and permission for performing tasks on the website.
+const websiteRoleSchema = new mongoose.Schema({
+    RoleID: { type: String, required: true, unique: true },
+})
 
 
 export const DiscordUsersDB = mongoose.model('DiscordUsers', discordUserSchema)

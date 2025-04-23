@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {isAuthenticated} from "../../utils/utils";
-import {AdminGroupsDB, AllServerRolesDB, RolesDB} from "../../../schema";
-import {PrivilegedRole} from "../../../../shared-types/types";
+import {AdminGroupsDB, AllServerRolesDB, RolesDB} from "../../../database";
+import {PrivilegedRole} from "../../../../shared-types/shared-types";
 import {defaultLogger} from "../../../logger";
 
 

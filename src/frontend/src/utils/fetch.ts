@@ -4,7 +4,7 @@ import {WhitelistResponseData, WhitelistRow} from "../pages/Whitelist";
 import {IDiscordUser} from "../pages/User";
 import {responseData} from "../pages/Profile";
 import {IPrivilegedRole} from "../pages/RoleEdit";
-import {ListEndpoint, UserResponseData} from "../../../shared-types/types";
+import {ListEndpoint, UserResponseData} from "../../../shared-types/shared-types";
 
 
 const baseURL = "http://localhost:5000";

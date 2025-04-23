@@ -4,7 +4,7 @@ import {DiscordUser} from "../utils/types";
 import {defaultLogger, Logger, LoggingLevel} from "../logger";
 import {accessTokenRequestSuccess, isAuthenticated, requestAccessToken, requestDiscordUserData} from "./utils/utils";
 import {getUsersFromCacheList, GetUsersFromCacheMap, processWhitelistProps} from "../cache";
-import {AdminGroupsDB, DiscordUsersDB, IDiscordRole, IPrivilegedRole, RolesDB} from "../schema";
+import {AdminGroupsDB, DiscordUsersDB, IDiscordRole, IPrivilegedRole, RolesDB} from "../database";
 import {getPlayerSummarySteam} from "../utils/steamAPI";
 import user from "./api/v1/user";
 

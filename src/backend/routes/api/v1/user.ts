@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {getUsersFromCacheList, GetUsersFromCacheMap, processWhitelistProps} from "../../../cache";
 import {isAuthenticated} from "../../utils/utils";
-import {DiscordUsersDB, RolesDB} from "../../../schema";
+import {DiscordUsersDB, RolesDB} from "../../../database";
 import {defaultLogger} from "../../../logger";
 import {getPlayerSummarySteam} from "../../../utils/steamAPI";
 import {WhitelistResponseData} from "../../main";

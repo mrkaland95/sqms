@@ -33,7 +33,7 @@ function DiscordAuth() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/profile');
+            navigate('/user');
         }
     }, [isLoggedIn, navigate])
 }

@@ -10,7 +10,7 @@ https://squad.fandom.com/wiki/Server_Administration
  */
 
 
-import {IDiscordRole} from "../backend/schema";
+import {IDiscordRole} from "../backend/database";
 
 export enum InGameAdminPermissions {
     CHANGE_MAP = "changemap",
@@ -116,4 +116,20 @@ export interface UserResponseData {
     userWhitelistSlots: number
     userWhitelistActiveDays: WeekDays[]
     userWhitelistedSteam64IDs: { steamID: string, name?: string }[]
+}
+
+export interface WebsiteRole {
+    roleID: string
+    name: string
+    permissions: WebsitePermissions[]
+}
+
+export enum WebsitePermissions {
+    ALL = '*',
+    GAME_SERVER_PERMISSIONS_MANAGE = 'game_server_permissions_manage'
+    // GAME_SERVER_PERMISSIONS_VIEW = 'GAME_SERVER_PERMISSIONS_VIEW',
+    // GAME_SERVER_PERMISSIONS_CREATE = 'GAME_SERVER_PERMISSIONS_CREATE',
+
+
+
 }

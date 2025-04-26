@@ -7,7 +7,6 @@ import mainRouter, {loggingMiddleware} from "./routes/main";
 import MongoStore from "connect-mongo";
 import cors from 'cors';
 import {Logger, LoggingLevel} from "./logger";
-import profileRouter from "./routes/api/v1/user";
 
 
 const app = express()

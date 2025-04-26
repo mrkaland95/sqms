@@ -9,17 +9,19 @@ const loginButtonID = "login-button"
 function AuthenticateWithDiscordButton() {
     return (
         <div className='button-div'>
-            <button className='default-button' onClick={redirectToDiscordAuth} id={loginButtonID}>LOGIN WITH DISCORD</button>
+            <button className='default-button' onClick={performLoginWithAuth} id={loginButtonID}>LOGIN WITH DISCORD</button>
         </div>
     )
 }
 
-
-export function redirectToDiscordAuth() {
+/**
+ * Performs the actual authentication process to the server.
+ */
+export function performLoginWithAuth() {
     const baseRedirectLink = 'http://localhost:5000/api/v1/auth/redirect'
-    const randomString: string = generateRandomString()
-    localStorage.setItem('oauth-string', randomString)
-    // const redirectURL = `${baseRedirectLink}&state=${btoa(randomString)}`
+    const authString: string = generateRandomString()
+    localStorage.setItem('oauth-string', authString)
+    // const redirectURL = `${baseRedirectLink}&state=${btoa(authString)}`
     const redirectURL = `${baseRedirectLink}`
 
     window.location.assign(redirectURL)
@@ -28,18 +30,9 @@ export function redirectToDiscordAuth() {
 
 
 export function LoggedIn() {
-
+    const authString = localStorage.getItem('oauth-string')
 }
 
-
-
-export async function handleLogout() {
-    await logoutRequest()
-        .then(() => {
-        })
-        .catch(error => console.error(error))
-    return (<></>)
-}
 
 
 // window.onload = () => {

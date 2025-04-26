@@ -1,5 +1,4 @@
 
-
 .nav-sidebar-collapse-button {
   display: flex;
   justify-content: center;
@@ -99,7 +98,7 @@ Element used to fill the space between the collapse and org icons, and the login
 }
 
 .nav-bar-user-button:hover {
-  transform: scale(1.05);
+  transform: scale(110%);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -111,9 +110,79 @@ Element used to fill the space between the collapse and org icons, and the login
 }
 
 .logged-in-dropdown-menu {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /*padding-right: 1rem;*/
-  /*width: 100%;*/
 }
+
+.logged-in-dropdown-content {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  border-radius: 5px;
+  top: 110%;
+  right: 0;
+  left: auto;
+  width: 15rem;
+  max-width: 95vw;
+  background-color: #434b5a;
+  color: #fff;
+  list-style: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: visibility 0s, opacity 0.15s;
+}
+
+.logged-in-dropdown-content.open {
+  visibility: visible;
+  opacity: 1;
+  z-index: 2000;
+}
+
+.logged-in-menu-item {
+  height: 2.5rem;
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  font-size: 0.8rem;
+  gap: 0.5rem;
+  width: 14rem;
+  white-space: nowrap;
+  color: #FFFFFF;
+}
+
+.logged-in-menu-item:hover {
+  filter: brightness(120%);
+}
+
+.logged-in-menu-item.icon {
+  /*margin-left: 0.2rem;*/
+  /*padding: 0;*/
+  width: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logged-in-menu-item.icon svg {
+  padding: 0;
+  margin: 0;
+}
+
+.logged-in-menu-item.text {
+  display: flex;
+  width: 100%;
+  /*justify-content: right*/
+}
+
+.logged-in-menu-anchor {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+

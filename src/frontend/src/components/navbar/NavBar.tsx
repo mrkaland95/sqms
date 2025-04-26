@@ -1,21 +1,25 @@
 import './navbar.css'
 import squadLogo from  '../../public/squad-logo.png'
 import defaultDiscordLogo from '../../public/discordblue.png'
-import {handleLogout, redirectToDiscordAuth} from "../Login";
+import { CiLogout } from "react-icons/ci";
+import { performLoginWithAuth} from "../Login";
 import {useAuth} from "../AuthProvider";
-import {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 
-export function NavBar({sidebarOpen, sidebarToggleCb}: NavbarProps) {
+export function NavBar({sidebarOpen, sidebarToggleFunction}: NavbarProps) {
+    const icon = '☰'
+
     return (
     <nav className={"navbar-new"}>
         <ul className={"navbar-ul"}>
             <li>
                 <button className={"nav-sidebar-collapse-button"}
-                        onClick={() => sidebarToggleCb()}
+                        onClick={() => sidebarToggleFunction()}
                         type={"button"}
-                        title={`${sidebarOpen ? 'Collapse Sidebar' : 'Open Sidebar'}`}>
-                    ☰
+                        title={`${sidebarOpen ? 'Collapse Sidebar' : 'Open Sidebar'}`}
+                >
+                    {icon}
                 </button>
             </li>
             <IconAnchorElement title={"Home"} href={"/"}/>
@@ -44,42 +48,83 @@ function LoginElement() {
 }
 
 function UserNotLoggedInElement() {
-    return(<button className={"nav-login-button"} type={"button"} onClick={redirectToDiscordAuth}>Login With Discord</button>)
+    return(<button className={"nav-login-button"} type={"button"} onClick={performLoginWithAuth}>Login With Discord</button>)
 }
 
 
-
-function UserLoggedInElement() {
-    function logoutFunction() {
-
-    }
-
-    return(
-        <button className={"nav-user-logged-in-button"} type={"button"} onClick={() => handleLogout()}>Log Out</button>
-    )
-}
 
 function LoggedInDropdownMenu() {
     const [menuOpen, setMenuOpen] = useState(false);
     const user = useAuth().user
+    const logout = useAuth().logout
+    const dropdownRef = useRef<HTMLDivElement | null>(null);
+
 
     const imageSize = 50;
 
     function toggleMenu() {
         setMenuOpen(!menuOpen);
     }
+    useEffect(() => {
+        const handleClickOutside = (event: any) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+    }, [])
 
     return (
-    <ul>
-        <div className={`logged-in-dropdown-menu ${menuOpen ? 'open' : ''}`}>
-            <div style={{paddingRight: '1rem', color: "white"}}>{user?.discordGlobalName}</div>
-            <button style={{width: imageSize, height: imageSize}} className={`nav-bar-user-button ${menuOpen ? 'open' : ''}`} onClick={() => toggleMenu()}>
-                <img src={defaultDiscordLogo} alt={"Default discord logo"} className={"nav-bar-user-image"}></img>
-            </button>
-        </div>
-    </ul>
+    <div className={`logged-in-dropdown-menu ${menuOpen ? 'open' : ''}`} ref={dropdownRef}>
+        {/*<div style={{paddingRight: '1rem', color: "white"}}>{user?.discordGlobalName}</div>*/}
+        <button style={{width: imageSize, height: imageSize}} className={`nav-bar-user-button ${menuOpen ? 'open' : ''}`} onClick={() => toggleMenu()}>
+            <img src={defaultDiscordLogo} alt={"Default discord logo"} className={"nav-bar-user-image"}></img>
+        </button>
+        <ul className={`logged-in-dropdown-content ${menuOpen ? 'open' : ''}`}>
+            <LoggedInMenuText>
+                {`Signed in as ${user?.discordGlobalName}`}<br/>
+            </LoggedInMenuText>
+            <LoggedInMenuText onClick={logout} leftIcon={<CiLogout size={20}/>}>
+                Sign Out
+            </LoggedInMenuText>
+            {/*<LoggedInMenuLink  href={"/logout"}>*/}
+            {/*    Sign out*/}
+            {/*</LoggedInMenuLink>*/}
+        </ul>
+    </div>
     )
 }
+
+
+function LoggedInMenuText(props: {children?: React.ReactNode, onClick?: () => void, leftIcon?: React.ReactNode}) {
+    if (props.onClick) {
+        return (
+            <li style={{cursor: "pointer"}} className={"logged-in-menu-item"} onClick={() => {props.onClick && props.onClick()}}>
+                <span className={"logged-in-menu-item icon"}>{props.leftIcon}</span>
+                <span className={"logged-in-menu-item text"}>{props.children}</span>
+            </li>)
+    } else {
+        return (
+            <li className={"logged-in-menu-item"}>
+                <span className={"logged-in-menu-item icon"}>{props.leftIcon}</span>
+                <span className={"logged-in-menu-item text"}>{props.children}</span>
+            </li>)
+    }
+
+
+}
+
+
+function LoggedInMenuLink(props: {leftIcon: React.ReactNode, children?: React.ReactNode, text?: string, href: string}) {
+    return (
+    <li className={"logged-in-menu-item"}>
+        <a className={"logged-in-menu-anchor"} href={props.href}>
+            <span className={"logged-in-menu-item icon"}>{props.leftIcon}</span>
+            <span className={"logged-in-menu-item text"}>{props.text}</span>
+        </a>
+    </li>)
+}
+
 
 function UserButton({}: {imageSrc: string}) {
 
@@ -115,7 +160,7 @@ interface NavbarAnchorProps {
 
 interface NavbarProps {
     sidebarOpen: boolean;
-    sidebarToggleCb: Function;
+    sidebarToggleFunction: Function;
 }
 
 interface NavbarIconAnchorProps {

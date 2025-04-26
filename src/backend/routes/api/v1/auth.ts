@@ -13,6 +13,7 @@ router.get('/login', async (req, res) => {
 
     defaultLogger.debug(`Received login request from user with IP: ${req.ip}`)
 
+    // TODO this needs to render the base document if on a live/staging environment.
     if (req.session?.discordUser) {
         defaultLogger.debug(`request had a user on session.`)
         res.redirect('/')
@@ -78,7 +79,7 @@ router.post('/logout', async (req, res) => {
             res.status(500).send('Internal server error')
         } else {
             defaultLogger.debug(`Succesfully logged out user.`)
-            res.status(200).redirect('/')
+            res.status(200).send('OK')
         }
     })
 })

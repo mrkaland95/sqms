@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import {fetchUserData} from "../utils/fetch";
 import {UserResponseData} from "../../../shared-types/shared-types";
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -10,6 +12,23 @@ function AuthProvider({ children } : AuthProviderProps) {
     const [user, setUser] = useState<UserResponseData | null>(null);
     const isAuthenticated = !!user?.isAuthenticated
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    // const url = "http://localhost:5000/api/v1"
+
+    async function logout() {
+        const response = await fetch('http://localhost:5000/api/v1/auth/logout', {
+            credentials: "include",
+            method: 'POST',
+            // cache: 'no-cache',
+            // mode: "cors"
+        })
+
+
+        console.log("Response", response)
+        localStorage.removeItem('oauth-string')
+        navigate('/')
+    }
 
     useEffect(() => {
         fetchUserData().then((res) => {
@@ -25,7 +44,7 @@ function AuthProvider({ children } : AuthProviderProps) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, user, setUser, loading}}>
+        <AuthContext.Provider value={{isAuthenticated, user, setUser, loading, logout}}>
             {children}
         </AuthContext.Provider>
     )
@@ -34,6 +53,7 @@ function AuthProvider({ children } : AuthProviderProps) {
 
 export function useAuth(): AuthContextProps {
     const context = useContext(AuthContext);
+
     if (!context) {
         throw new Error('useAuth must be used within the AuthProvider');
     }
@@ -50,6 +70,7 @@ interface AuthContextProps {
     user: UserResponseData | null | undefined;
     setUser: React.Dispatch<React.SetStateAction<UserResponseData | null>>
     loading: boolean;
+    logout: () => void;
 }
 
 

@@ -10,6 +10,8 @@ import { CSS } from '@dnd-kit/utilities';
 import {IAdminGroup} from "./AdminGroups";
 import {getUsersWhitelist, postAdminGroups, postUserWhitelists} from "../utils/fetch";
 import {nanoid} from "nanoid";
+import DragToSort from "../components/DragToSort";
+import OptionsDropdown, {OptionsDivider, OptionsItem} from "../components/dropdowns/OptionsDropdown";
 
 
 function Whitelist() {
@@ -57,14 +59,20 @@ function Whitelist() {
     )
 }
 
+function getEmptyRow(): WhitelistRow {
+    return { steamID: '', name: '', id: nanoid(), slotEnabled: true }
+}
+
 
 function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
     const [whitelists, setWhitelists] = useState<WhitelistRow[]>([]);
 
     useEffect(() => {
         let slots: WhitelistRow[] = [];
-        for (let i = 0; i < whitelist.length || i < whitelistSlots; i++) {
-            let row: WhitelistRow = { steamID: '', name: '', id: nanoid(), whitelistEnabled: true };
+        // Render rows up to the whitelist slots available in case the user has saved less than their max
+        // Or render their overflowed slots such that they can change the order if desired.
+        for (let i = 0; i < Math.max(whitelistSlots, whitelist.length); i++) {
+            let row: WhitelistRow = getEmptyRow();
             const steamID = whitelist[i]?.steamID;
             const name = whitelist[i]?.name;
 
@@ -73,16 +81,28 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
                 if (name) {
                     row.name = name;
                 }
+                // if (i > whitelistSlots) {
+                //     row.slotEnabled = false
+                // }
             }
+
+
             slots.push(row);
         }
         setWhitelists(slots);
     }, [whitelist, whitelistSlots]);
 
+
     function handleInputChange(index: number, field: 'steamID' | 'name', value: string) {
         const updatedRows = [...whitelists];
         updatedRows[index][field] = value;
         setWhitelists(updatedRows);
+    }
+
+    function clearRow(index: number) {
+        const newRows = [...whitelists];
+        newRows[index] = getEmptyRow();
+        setWhitelists(newRows);
     }
 
     function handleSubmit(event: React.FormEvent) {
@@ -112,6 +132,7 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
                             row={row}
                             index={index}
                             onInputChange={handleInputChange}
+                            clearRow={clearRow}
                         />
                     ))}
                     <div className={"whitelist-container button-wrapper"}>
@@ -127,8 +148,7 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
                             type={"button"}
                             style={{ marginTop: '20px' }}
                             className={"default-button"}
-                            title={"Validate IDs"}
-                        >
+                            title={"Validate IDs"}>
                             Validate IDs
                         </button>
                     </div>
@@ -139,7 +159,7 @@ function WhiteListForms({ whitelist, whitelistSlots }: WhitelistFormProps) {
 }
 
 
-function SortableWhitelistRow({ id, row, index, onInputChange }: any) {
+function SortableWhitelistRow({ id, row, index, onInputChange, clearRow }: any) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
     const style = {
@@ -154,9 +174,8 @@ function SortableWhitelistRow({ id, row, index, onInputChange }: any) {
             style={{ ...style }}
             {...attributes}
         >
-            <span {...listeners} style={{ cursor: 'grab', marginRight: '10px' }}>
-                ☰
-            </span>
+
+            <DragToSort listeners={listeners} style={{marginRight: '10px'}}/>
             <input
                 type="text"
                 inputMode={"numeric"}
@@ -166,6 +185,7 @@ function SortableWhitelistRow({ id, row, index, onInputChange }: any) {
                 placeholder={"Enter SteamID"}
                 maxLength={17}
                 className={"steam-id-input"}
+                title={"A steam64 ID, uniquely identifying a steam account"}
             />
             <input
                 type="text"
@@ -174,7 +194,14 @@ function SortableWhitelistRow({ id, row, index, onInputChange }: any) {
                 placeholder="Enter Optional Name"
                 maxLength={50}
                 className={"steam-id-input"}
+                title={"An optional name to describe the steamID"}
             />
+            {/*<ClearButton text={"Clear"} size={25} onClick={}/>*/}
+            <OptionsDropdown size={25}>
+                <OptionsItem onClick={() => {clearRow(index)}}>
+                    Clear
+                </OptionsItem>
+            </OptionsDropdown>
         </div>
     );
 }
@@ -283,7 +310,7 @@ export type Whitelist = {
 
 export type WhitelistRow = Whitelist & {
     id: string;
-    whitelistEnabled: boolean
+    slotEnabled: boolean
 }
 
 

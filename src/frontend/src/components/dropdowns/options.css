@@ -11,19 +11,31 @@
   font-weight: 600;
 }
 
+.options-menu-wrapper {
+  position: relative;
+  display: flex;
+}
+
 .options-menu-content {
-  max-height: 0;
   visibility: hidden;
+  min-width: 5rem;
+  margin: 0;
   position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #434b5a;
   color: #dddddd;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   padding: 0.2rem 0;
+  list-style: none;
+  transition: visibility 0s, max-height 0.2s ease;
+  white-space: nowrap;
 }
 
+
 .options-menu-content.open {
-  max-height: 100%;
   visibility: visible;
   z-index: 500000;
 }
@@ -38,11 +50,12 @@
 
 .options-menu-item {
   height: 2rem;
-  padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
+  width: 100%;
+  padding: 0 1rem;
+  /*background: transparent;*/
   border: none;
 }
 

@@ -40,7 +40,7 @@ function OptionsDropdown(props: {buttonText?: string, children?: React.ReactNode
 
 export function OptionsItem(props: {title?: string, onClick?: () => void, leftIcon?: any, rightIcon?: any, children?: React.ReactNode}) {
     return (
-    <li className={"options-menu-item"} title={props.title} onClick={() => props.onClick && props.onClick()}>
+    <li style={{cursor: "pointer"}} className={"options-menu-item"} title={props.title} onClick={() => props.onClick && props.onClick()}>
         <span>{props.leftIcon}</span>
         {props.children}
         <span>{props.rightIcon}</span>

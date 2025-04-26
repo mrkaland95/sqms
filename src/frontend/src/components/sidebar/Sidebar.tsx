@@ -65,7 +65,7 @@ function SidebarDivider() {
  * Component that represents a dropdown menu embedded within the sidebar.
  * @param buttonText
  * @param children
- * @param icon Icon displayed to left of the text.
+ * @param icon Icon displayed on the left side of the text.
  * @param openState {boolean}
  */
 function SidebarDropdown({buttonText, children, icon, openState}: SideBarDropDownProps) {

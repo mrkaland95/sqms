@@ -30,7 +30,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
         <AuthProvider>
             <div className="app-container">
-                <NavBar sidebarOpen={sideBarOpen} sidebarToggleCb={toggleSideBar}></NavBar>
+                <NavBar sidebarOpen={sideBarOpen} sidebarToggleFunction={toggleSideBar}></NavBar>
                 <div className="body">
                     <SidebarNew open={sideBarOpen}/>
                     <div className="content-container">

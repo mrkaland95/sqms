@@ -8,6 +8,7 @@ declare module 'express-session' {
         discordUser: DiscordUser
         isAuthenticated: boolean
         user: any
+        oAuthState?: string
     }
 }
 

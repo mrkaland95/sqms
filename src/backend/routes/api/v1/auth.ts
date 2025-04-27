@@ -7,15 +7,34 @@ import {defaultLogger} from "../../../logger";
 
 const router = Router()
 
+/**
+ * Route that initializes the login process. Redirects the user to discord for authentication.
+ */
+router.get('/redirect', (req, res) => {
+    const redirectURL = new URL('https://discord.com/oauth2/authorize?client_id=1093586781703786526&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fv1%2Fauth%2Flogin&scope=identify')
+
+    const query = req.query
+    const { state } = query
+
+    if (state && typeof state === 'string') {
+        redirectURL.searchParams.set('state', state)
+        req.session.oAuthState = String(state)
+        req.session.save()
+        res.redirect(redirectURL.href)
+    } else {
+        res.sendStatus(400)
+    }
+})
+
 
 router.get('/login', async (req, res) => {
-    const { code } = req.query
+    const { code, state } = req.query
+    const redirectURL = new URL(`http://localhost:5000/api/v1/auth/login`)
 
     defaultLogger.debug(`Received login request from user with IP: ${req.ip}`)
 
-    // TODO this needs to render the base document if on a live/staging environment.
     if (req.session?.discordUser) {
-        defaultLogger.debug(`request had a user on session.`)
+        defaultLogger.debug(`Login request had a user on session.`)
         res.redirect('/')
         return
     }
@@ -26,13 +45,22 @@ router.get('/login', async (req, res) => {
         return
     }
 
-    let redirectURI = `http://localhost:5000/api/v1/auth/login`
+    if (!state || state !== req.session.oAuthState) {
+        defaultLogger.debug("User has invalid state parameter")
+        res.status(400).send('Invalid state parameter.')
+        return
+    }
 
-    const accessTokenRequest = await requestAccessToken(String(code), env.discordOauth2ClientPublic, env.discordOauth2ClientSecret, redirectURI)
+    // Don't need the state parameter anymore, remove it from the session.
+    delete req.session.oAuthState
 
+    const accessTokenRequest = await requestAccessToken(String(code), env.discordOauth2ClientPublic, env.discordOauth2ClientSecret, redirectURL.href)
+    console.log(accessTokenRequest)
+
+    // Implies the discord redirect URL taken in from the environment variable is invalid and will not work with the API.
     if (accessTokenRequest.body?.error_description === 'Invalid "redirect_uri" in request.') {
         res.sendStatus(500)
-        throw new Error(`Invalid "redirect_uri" in environment.`)
+        throw new Error(`Invalid "redirect_uri" in environment. `)
     }
 
     if (accessTokenRequest.body?.error_description === 'Invalid "code" in request.') {
@@ -67,15 +95,13 @@ router.get('/login', async (req, res) => {
 })
 
 
-router.get('/redirect', (req, res) => {
-    res.redirect('https://discord.com/oauth2/authorize?client_id=1093586781703786526&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fapi%2Fv1%2Fauth%2Flogin&scope=identify')
-})
+
 
 
 router.post('/logout', async (req, res) => {
     req.session.destroy(err => {
         if (err) {
-            console.error("Error when destroying session: ", err)
+            defaultLogger.error("Error when destroying session: ", err)
             res.status(500).send('Internal server error')
         } else {
             defaultLogger.debug(`Succesfully logged out user.`)

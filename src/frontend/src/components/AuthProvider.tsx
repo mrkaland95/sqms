@@ -17,17 +17,19 @@ function AuthProvider({ children } : AuthProviderProps) {
     // const url = "http://localhost:5000/api/v1"
 
     async function logout() {
-        const response = await fetch('http://localhost:5000/api/v1/auth/logout', {
-            credentials: "include",
-            method: 'POST',
-            // cache: 'no-cache',
-            // mode: "cors"
-        })
+        try {
+            const response = await fetch('http://localhost:5000/api/v1/auth/logout', {
+                credentials: "include",
+                method: 'POST',
+            })
 
-
-        console.log("Response", response)
-        localStorage.removeItem('oauth-string')
-        navigate('/')
+            localStorage.removeItem('oauth-string')
+            navigate('/')
+            window.location.reload()
+        }
+        catch (e) {
+            console.error(e)
+        }
     }
 
     useEffect(() => {

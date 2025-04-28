@@ -1,0 +1,44 @@
+
+.management-table-wrapper {
+  margin-bottom: 1rem;
+  padding: 1rem 2rem;
+}
+
+.management-table-wrapper table {
+  /*border-radius: 5px;*/
+  /*padding: 1rem;*/
+}
+
+
+
+.management-table-wrapper tbody tr:nth-child(even) {
+  background: hsla(0, 4%, 5%, 0.1);
+}
+
+.management-table-wrapper tbody tr:hover {
+  background: rgba(44, 44, 52, 0.76);
+  /*filter: brightness(120%);*/
+}
+
+
+.management-table-wrapper tbody thead {
+  border-bottom: 1px solid transparent;
+}
+
+
+.management-table-wrapper th {
+  background: hsla(213, 12%, 15%, 0.5);
+  color: #dddddd;
+  border-left: 2px solid transparent;
+  /*border-radius: 5px 0 0 0;*/
+  /*padding: 1rem 1rem 1rem 1rem;*/
+}
+
+
+.management-table-wrapper td,
+.management-table-wrapper th {
+  text-align: left;
+  padding: 1rem 1rem 1rem 1rem;
+}
+
+/*.management-table-head-row*/

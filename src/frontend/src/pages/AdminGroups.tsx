@@ -6,6 +6,11 @@ import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
 import {getAdminGroups, postAdminGroups} from "../utils/fetch";
 import {cancelButtonColor, confirmButtonColor} from "../utils/utils";
 import ToggleButton from "../components/Toggle-Button";
+import {EditableTable} from "../components/generic-edit-table/GenericEditTable";
+import {EditableDataGrid} from "../components/generic-edit-table/GenericEditTable2";
+import {AdminGroup} from "../../../shared-types/shared-types";
+import ManagementTable from "../components/management-table/ManagementTable";
+import OptionsDropdown, {OptionsItem} from "../components/dropdowns/OptionsDropdown";
 
 
 axios.defaults.withCredentials = true
@@ -23,198 +28,202 @@ function AdminGroups() {
 
     return (
     <div className={"admin-group-container"}>
-        <h1 style={{paddingBottom: '1rem'}}>ADMIN PERMISSION GROUP MANAGEMENT</h1>
-        <AdminGroupForm adminGroups={data}></AdminGroupForm>
+        <h1 style={{paddingBottom: '1rem'}}>IN-GAME ADMIN PERMISSION GROUPS</h1>
+        <AdminGroupForm adminGroups={data}/>
     </div>
     )
 }
 
 
-function AdminGroupForm({adminGroups}: AdminGroupFormProps) {
+function AdminGroupForm({ adminGroups}: AdminGroupFormProps) {
     const [adminGroupRows, setAdminGroupRows] = useState<AdminGroupRow[]>([]);
-    const [initialAdminGroupRows, setInitialAdminGroupRows] = useState<AdminGroupRow[]>([...adminGroups]);
 
+    // Ensure the "whitelist" row isn't part of the editable data.
     useEffect(() => {
-      for (const group of adminGroups) {
-        if (group.GroupName.toLowerCase() === 'whitelist') {
-            const i = adminGroups.indexOf(group)
-            adminGroups.splice(i, 1)
-        }
-      }
-      setAdminGroupRows([...adminGroups])
+        const filteredGroups = adminGroups.filter(
+            (group) => group.GroupName.toLowerCase() !== "whitelist"
+        );
+        setAdminGroupRows(filteredGroups);
     }, [adminGroups]);
-
 
     function onAddGroup() {
         const emptyGroup: AdminGroupRow = {
-          GroupID: crypto.randomUUID(),
-          GroupName: '',
-          Enabled: true,
-          IsWhitelistGroup: false,
-          Permissions: []
-        }
-        adminGroupRows.push(emptyGroup)
-        setAdminGroupRows([...adminGroupRows])
+            GroupID: crypto.randomUUID(),
+            GroupName: "",
+            Enabled: true,
+            IsWhitelistGroup: false,
+            Permissions: [],
+        };
+        setAdminGroupRows((prev) => [...prev, emptyGroup]);
     }
 
-    async function onSubmitGroup(e: any) {
-        const res = await Swal.fire({
-            title: 'Are you sure you want to submit groups?',
-            text: `This action is permanent`,
+    async function onSubmitGroup() {
+        const confirm = await Swal.fire({
+            title: "Are you sure you want to submit groups?",
+            text: "This action is permanent",
             icon: "warning",
             showCancelButton: true,
-            cancelButtonText: 'CANCEL',
+            cancelButtonText: "CANCEL",
             cancelButtonColor: cancelButtonColor,
             confirmButtonColor: confirmButtonColor,
-            confirmButtonText: 'SUBMIT',
+            confirmButtonText: "SUBMIT",
             focusConfirm: true,
-            backdrop: true
-        })
+            backdrop: true,
+        });
 
-        if (!res.isConfirmed) return;
+        if (!confirm.isConfirmed) return;
 
-        if (adminGroupRows.some(row => !row.GroupName)) {
-          await Swal.fire({
-              title: `Empty group name`,
-              text: `Groups cannot have an empty name.`,
-              icon: "warning"
-          })
-          return
-        }
-
-        let duplicateGroups: AdminGroupRow[] = []
-        for (const group1 of adminGroupRows) {
-          for (const group2 of adminGroupRows) {
-              if (group1 === group2) {
-                  continue
-              }
-
-              if (group1.GroupName === group2.GroupName) {
-                  duplicateGroups.push(group1)
-              }
-          }
-        }
-
-        if (duplicateGroups.length > 0) {
-          await Swal.fire({
-              title: 'Duplicate group names',
-              text: `Groups cannot have duplicate names: ${duplicateGroups.map(group => group.GroupName).join('\n')}`,
-              icon: "warning"
-          })
-          return
-        }
-
-        const result = await postAdminGroups(adminGroupRows)
-
-        if (result.statusText == 'OK') {
+        if (adminGroupRows.some((row) => !row.GroupName)) {
             await Swal.fire({
-                title: 'Success',
-                text: `Successfully installed groups`,
-                icon: "success"
-            })
+                title: "Empty group name",
+                text: "Groups cannot have an empty name.",
+                icon: "warning",
+            });
+            return;
+        }
+
+        const seen = new Set<string>();
+        const duplicates = adminGroupRows.filter((row) => {
+            if (seen.has(row.GroupName)) {
+                return true;
+            } else {
+                seen.add(row.GroupName);
+                return false;
+            }
+        });
+
+        if (duplicates.length > 0) {
+            await Swal.fire({
+                title: "Duplicate group names",
+                text: `Groups cannot have duplicate names:\n${duplicates
+                    .map((g) => g.GroupName)
+                    .join("\n")}`,
+                icon: "warning",
+            });
+            return;
+        }
+
+        const result = await postAdminGroups(adminGroupRows);
+
+        if (result.statusText === "OK") {
+            await Swal.fire({
+                title: "Success",
+                text: "Successfully updated groups!",
+                icon: "success",
+            });
         } else {
             await Swal.fire({
-                title: 'Error',
-                text: `Error occured when installing groups`,
-                icon: "error"
-            })
+                title: "Error",
+                text: "Error occurred when updating groups",
+                icon: "error",
+            });
         }
     }
 
     async function onRowDelete(group: AdminGroupRow) {
-        const result = await Swal.fire({
-            title: 'Delete admin group',
-            text: 'Are you sure you wish to delete this group? This action cannot be undone.',
-            cancelButtonText: 'Cancel',
+        const confirm = await Swal.fire({
+            title: "Delete admin group",
+            text: "Are you sure you wish to delete this group? This action cannot be undone.",
             showCancelButton: true,
+            cancelButtonText: "Cancel",
             icon: "warning",
-        })
+        });
 
-        if (!result.isConfirmed) return;
+        if (!confirm.isConfirmed) return;
 
-        const newAdminGroupRows = adminGroupRows.filter(row => row.GroupID !== group.GroupID);
-        setAdminGroupRows(newAdminGroupRows);
+        setAdminGroupRows((prev) =>
+            prev.filter((row) => row.GroupID !== group.GroupID)
+        );
 
-        if (!group?._id) {
+        if (!group._id) {
             await Swal.fire({
-                title: 'Success',
+                title: "Success",
                 text: `Successfully deleted group: ${group.GroupName}`,
-                icon: "success"
-            })
-            return
+                icon: "success",
+            });
+            return;
         }
 
         const response = await axios.delete(
-            `http://localhost:5000/api/v1/admingroups/`,
-            {
-                data: { id: group.GroupID }
-            }
-        )
+            "http://localhost:5000/api/v1/admingroups",
+            { data: { id: group.GroupID } }
+        );
 
-        if (response.statusText != 'OK') {
+        if (response.statusText !== "OK") {
             await Swal.fire({
-                title: 'Error',
-                text: `Error occured when attempting to delete the group.`,
+                title: "Error",
+                text: "Error occurred when attempting to delete the group.",
                 icon: "warning",
-            })
-            return
+            });
+            return;
         }
 
         await Swal.fire({
-            title: 'Success',
+            title: "Success",
             text: `Successfully deleted group: ${group.GroupName}`,
-            icon: "success"
-        })
-    }
-
-    function onInputChange(index: number, e: any) {
-        const newGroupName = e.target.value;
-        setAdminGroupRows((prev) => {
-            const updated = [...prev];
-            updated[index].GroupName = newGroupName;
-            return updated;
+            icon: "success",
         });
     }
 
+    function onInputChange(index: number, e: React.ChangeEvent<HTMLInputElement>) {
+        const newGroupName = e.target.value;
+        setAdminGroupRows((prev) =>
+            prev.map((row, i) =>
+                i === index ? { ...row, GroupName: newGroupName } : row
+            )
+        );
+    }
+
     return (
-      <div>
-      <form onSubmit={e => {
-          e.preventDefault();
-          onSubmitGroup(e)}}>
-          <table id="admin-groups-table">
-              <thead>
-              <tr>
-                  <th id={"GroupName"}>Group Name</th>
-                  <th id={"Permissions"}>Permissions</th>
-                  <th id={"Enabled"}>Enabled</th>
-                  <th id={"Delete"}></th>
-              </tr>
-              </thead>
-              <tbody>
-              <WhitelistGroup></WhitelistGroup>
-                <SortableContext items={adminGroupRows.map((group) => group.GroupID)}>
-                    {adminGroupRows.map((group, index) => (
-                        <SortableGroupRow
-                            key={group.GroupID || index}
-                            id={group.GroupID || index.toString()}
-                            row={group}
-                            index={index}
-                            onInputChange={onInputChange}
-                            onRowDelete={onRowDelete}
-                            setAdminGroupRows={setAdminGroupRows}
-                        />
-                    ))}
-                </SortableContext>
-            </tbody>
-        </table>
-    <ButtonRow onAddGroup={onAddGroup}></ButtonRow>
-    </form>
-  </div>
-  );
+        <div className={"content-wrapper-box"}>
+            <form onSubmit={(e) => {
+                e.preventDefault()
+                onSubmitGroup()
+            }}>
+                <ManagementTable
+                    headerCells={
+                    [
+                        <th>Group Name</th>,
+                        <th>Permissions</th>,
+                        <th>Enabled</th>,
+                        <th>Options</th>,
+                    ]}
+                    onSubmit={() => {}}>
+                        <WhitelistGroup />
+                        <SortableContext items={adminGroupRows.map((g) => g.GroupID)}>
+                            {adminGroupRows.map((group, index) => (
+                                <AdminGroupRow
+                                    key={group.GroupID}
+                                    id={group.GroupID}
+                                    row={group}
+                                    index={index}
+                                    onInputChange={onInputChange}
+                                    onRowDelete={onRowDelete}
+                                    setAdminGroupRows={setAdminGroupRows}
+                                />
+                            ))}
+                        </SortableContext>
+                </ManagementTable>
+                <div className={"admin-group-container buttons-container"}>
+                    <button type={"submit"} className={"default-button"}>Submit</button>
+                    <button type={"button"} className={"default-button"} onClick={onAddGroup}>Add Group</button>
+                </div>
+            </form>
+        </div>
+    )
 }
 
 
-function SortableGroupRow({row, index, onInputChange, onRowDelete, setAdminGroupRows}: any) {
+/**
+ * Represents the table rows to edit the admin group data.
+ * @param row
+ * @param index
+ * @param onInputChange
+ * @param onRowDelete
+ * @param setAdminGroupRows
+ * @constructor
+ */
+function AdminGroupRow({row, index, onInputChange, onRowDelete, setAdminGroupRows}: any) {
     function onGroupToggle(e: ChangeEvent<HTMLInputElement>, permission: string) {
         if (e.target.checked && !row.Permissions.includes(permission)) {
             row.Permissions.push(permission);
@@ -261,9 +270,11 @@ function SortableGroupRow({row, index, onInputChange, onRowDelete, setAdminGroup
                         </label>
                         </div>
 
-                        <p style={{fontSize: '0.7rem'}}><em>
-                            {ALL_POSSIBLE_PERMISSIONS_MAP.get(permission)}
-                        </em></p>
+                        <p style={{fontSize: '0.7rem'}}>
+                            <em>
+                                {ALL_POSSIBLE_PERMISSIONS_MAP.get(permission)}
+                            </em>
+                        </p>
                     </div>
                 ))}
             </div>
@@ -280,17 +291,20 @@ function SortableGroupRow({row, index, onInputChange, onRowDelete, setAdminGroup
         }}/>
         </td>
         <td>
-            <button className={"delete-button"} type={"button"} onClick={() => onRowDelete(row)}>
-                DELETE
-            </button>
+            <OptionsDropdown size={25}>
+                <OptionsItem onClick={() => {onRowDelete(row)}}>Delete</OptionsItem>
+            </OptionsDropdown>
         </td>
     </tr>)
 }
 
-
+/**
+ * Represents the "hardcoded" whitelist group, meant to be unable to be deleted.
+ * @constructor
+ */
 function WhitelistGroup() {
     return (
-        <tr title={"The whitelist group cannot be deleted"} style={{padding: '10px 10px'}}>
+        <tr title={"The whitelist group cannot be deleted"}>
             <td>
                 <input
                     className={"steam-id-input"}
@@ -329,7 +343,9 @@ function ButtonRow({onAddGroup}: any) {
 }
 
 
-
+/**
+ * Maps a permission, stored as a key, to a value representing a description.
+ */
 const ALL_POSSIBLE_PERMISSIONS_MAP = new Map([
     ["changemap", "Allows a user to use map commands such as adminSetNextLayer or adminChangeMap."],
     ["canseeadminchat", "Allows a user to *see* the in-game admin chat, as well as teamkills on the feed."],
@@ -383,27 +399,6 @@ export type AdminGroupRow = {
     updatedAt?: Date
 }
 
-
-export enum InGameAdminPermissions {
-    CHANGE_MAP = "changemap",
-    CAN_SEE_ADMIN_CHAT = "canseeadminchat",
-    BALANCE = "balance",
-    PAUSE = "pause",
-    CHEAT = "cheat",
-    PRIVATE = "private",
-    CAN_USE_ADMIN_CHAT = "chat",
-    KICK = "kick",
-    BAN = "ban",
-    CONFIG = "config",
-    IMMUNE = "immune",
-    MANAGE_SERVER = "manageserver",
-    CAMERAMAN = "cameraman",
-    FEATURE_TEST = "featuretest",
-    FORCE_TEAM_CHANGE = "forceteamchange",
-    RESERVE = "reserve",
-    DEBUG = "debug",
-    TEAM_CHANGE = "teamchange"
-}
 
 
 export default AdminGroups

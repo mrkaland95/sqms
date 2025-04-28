@@ -1,6 +1,6 @@
 import {IRoute, Router} from "express";
 
-import {AdminGroupsDB} from "../../../schema";
+import {AdminGroupsDB} from "../../../database";
 import {isAuthenticated} from "../../utils/utils";
 import {defaultLogger} from "../../../logger";
 

@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import './options.css'
 
+
 function OptionsDropdown(props: {buttonText?: string, children?: React.ReactNode, size?: number}) {
     const [menuOpen, setMenuOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -8,8 +9,7 @@ function OptionsDropdown(props: {buttonText?: string, children?: React.ReactNode
     const optionsIcon = '…'
 
 
-
-    // Adds functionality that closes the menu if the user clicks outside of it.
+    // Adds functionality that closes the menu if the user clicks outside it.
     useEffect(() => {
         const handleClickOutside = (event: any) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

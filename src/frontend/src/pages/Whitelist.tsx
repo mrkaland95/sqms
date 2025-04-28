@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useQuery } from '@tanstack/react-query';
 import React, {useEffect, useState} from "react";
-// import {IPrivilegedRole} from "../../../../dist/backend/schema";
 import Swal from "sweetalert2";
 import {daysMap, steamID64Regex, WeekDays} from "../utils/utils";
 import { DndContext, closestCenter } from '@dnd-kit/core';
@@ -25,9 +24,9 @@ function Whitelist() {
     if (error) return <p>Error: {error.message}</p>;
     if (!data) return <p>Something went wrong when loading your whitelist data</p>
 
-    const activeDaysList = data.whitelistActiveDays.map(day => {
-        return daysMap.get(day)
-    })
+
+    const activeDaysList = Array.from(daysMap.values())
+
 
     return (
         <>
@@ -196,7 +195,6 @@ function SortableWhitelistRow({ id, row, index, onInputChange, clearRow }: any) 
                 className={"steam-id-input"}
                 title={"An optional name to describe the steamID"}
             />
-            {/*<ClearButton text={"Clear"} size={25} onClick={}/>*/}
             <OptionsDropdown size={25}>
                 <OptionsItem onClick={() => {clearRow(index)}}>
                     Clear

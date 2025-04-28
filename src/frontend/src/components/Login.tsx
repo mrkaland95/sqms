@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {generateRandomString} from "../utils/utils";
 import {useAuth} from "./AuthProvider";
-import {logoutRequest} from "../utils/fetch";
 import {Navigate, useNavigate} from "react-router-dom";
 
 const loginButtonID = "login-button"
@@ -28,10 +27,6 @@ export function performLoginWithAuth() {
     // TODO remove this hardcode and take it in as an .env
 }
 
-
-export function LoggedIn() {
-    const authString = localStorage.getItem('oauth-string')
-}
 
 
 

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { IoChevronDown } from "react-icons/io5";
-import '../css/expandabledropdown.css'
+import './expandabledropdown.css'
 
 
 function ExpandableDropdown({ buttonTitle, buttonText, children }: DropDownProps) {

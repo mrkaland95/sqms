@@ -330,6 +330,7 @@ function WhitelistGroup() {
                 </div>
             </td>
             <td><input type={"checkbox"} disabled={true} checked={true}/></td>
+            <td></td>
         </tr>)
 }
 

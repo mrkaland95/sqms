@@ -3,7 +3,7 @@ import {AdminGroupRow} from "../pages/AdminGroups";
 import {WhitelistResponseData, WhitelistRow} from "../pages/Whitelist";
 import {IDiscordUser} from "../pages/User";
 import {responseData} from "../pages/Profile";
-import {IPrivilegedRole} from "../pages/RoleEdit";
+import {IPrivilegedRole} from "../pages/DiscordRoleEdit";
 import {ListEndpoint, UserResponseData} from "../../../shared-types/shared-types";
 
 
@@ -68,6 +68,11 @@ export async function postUserSteamID(steamID: string) {
         method: "POST",
         data: { steamID: steamID },
     })
+
+    if (result.status != 200) {
+        throw new Error("Unable to update user's steamID")
+    }
+
     return result
 }
 
@@ -141,3 +146,4 @@ export async function logoutRequest() {
     return response
 
 }
+

@@ -35,7 +35,7 @@
 }
 
 .custom-dropdown-button:hover {
- cursor: pointer;
+  cursor: pointer;
   filter: brightness(110%);
 }
 

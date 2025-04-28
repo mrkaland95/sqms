@@ -29,12 +29,13 @@ export function NavBar({sidebarOpen, sidebarToggleFunction}: NavbarProps) {
     </nav>)
 }
 
-/*
-Utility component used to fill the gap between the left side of the navbar, and shifting content after it to the right side.
+
+/**
+ * Utility component used to fill the middle, so that the avatar/login buttons gets pushed all the way to the right.
+ * @constructor
  */
 function NavbarMiddleFillElement() {
-    return(
-    <div className={"navbar-fill-element"}></div>)
+    return(<div className={"navbar-fill-element"}></div>)
 }
 
 function LoginElement() {
@@ -76,7 +77,6 @@ function LoggedInDropdownMenu() {
 
     return (
     <div className={`logged-in-dropdown-menu ${menuOpen ? 'open' : ''}`} ref={dropdownRef}>
-        {/*<div style={{paddingRight: '1rem', color: "white"}}>{user?.discordGlobalName}</div>*/}
         <button style={{width: imageSize, height: imageSize}} className={`nav-bar-user-button ${menuOpen ? 'open' : ''}`} onClick={() => toggleMenu()}>
             <img src={defaultDiscordLogo} alt={"Default discord logo"} className={"nav-bar-user-image"}></img>
         </button>
@@ -87,9 +87,6 @@ function LoggedInDropdownMenu() {
             <LoggedInMenuText onClick={logout} leftIcon={<CiLogout size={20}/>}>
                 Sign Out
             </LoggedInMenuText>
-            {/*<LoggedInMenuLink  href={"/logout"}>*/}
-            {/*    Sign out*/}
-            {/*</LoggedInMenuLink>*/}
         </ul>
     </div>
     )
@@ -110,8 +107,6 @@ function LoggedInMenuText(props: {children?: React.ReactNode, onClick?: () => vo
                 <span className={"logged-in-menu-item text"}>{props.children}</span>
             </li>)
     }
-
-
 }
 
 

@@ -9,7 +9,7 @@ import User from "./pages/User";
 import Whitelist from "./pages/Whitelist";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import AdminGroups from "./pages/AdminGroups";
-import RoleEdit from "./pages/RoleEdit";
+import DiscordRoleEdit from "./pages/DiscordRoleEdit";
 import ListEdit from "./pages/ListEdit";
 import SidebarNew from "./components/sidebar/Sidebar";
 import {NavBar} from "./components/navbar/NavBar";
@@ -57,7 +57,7 @@ function App() {
                             />
                             <Route
                                 path="/rolesedit"
-                                element={<AdminAuthorizedRoute element={<RoleEdit />} />}
+                                element={<AdminAuthorizedRoute element={<DiscordRoleEdit />} />}
                             />
                             <Route
                                 path="/listsedit"

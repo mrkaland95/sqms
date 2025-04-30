@@ -11,20 +11,20 @@ import {defaultLogger, Logger} from "../../logger";
  * @param code {string}
  * @param client_id {string}
  * @param client_secret {string}
- * @param redirect_URI {string}
+ * @param redirect_URL {string}
  */
-export async function requestAccessToken(code: string, client_id: string, client_secret: string, redirect_URI: string): Promise<accessTokenRequestData> {
+export async function requestAccessToken(code: string, client_id: string, client_secret: string, redirect_URL: string): Promise<accessTokenRequestData> {
 
-    const body = new URLSearchParams({
+    const body: URLSearchParams = new URLSearchParams({
         client_id: client_id,
         client_secret: client_secret,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: redirect_URI,
+        redirect_uri: redirect_URL,
         scope: 'identify'
     })
 
-    const oAuthParams = {
+    const oAuthParams: RequestInit = {
         method: 'POST',
         body: body,
         headers: {
@@ -35,15 +35,13 @@ export async function requestAccessToken(code: string, client_id: string, client
     const oAuthResponse = await fetch('https://discord.com/api/oauth2/token', oAuthParams);
     const oAuthResponseJSON = await oAuthResponse.json()
 
-    // if (oAuthResponseJSON.status !== 200) {}
-
     return {
         statusCode: oAuthResponse.status,
         body: oAuthResponseJSON
     }
 }
 
-export async function requestDiscordUserData(accessTokenData: accessTokenRequestSuccess) {
+export async function requestDiscordUserData(accessTokenData: accessTokenData) {
     const userResponse =
         await fetch('https://discord.com/api/users/@me', {
             headers: {
@@ -89,14 +87,12 @@ export async function refreshAccessToken(refreshToken: string, clientID: string,
 
     const result = await fetch(tokenURL, params)
     console.log(result)
-
-
 }
 
 
 export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
     if (!req.session?.discordUser) {
-        defaultLogger.debug(`Recieved request from unauthenticated user...`)
+        defaultLogger.debug(`Received request from unauthenticated user...`)
         defaultLogger.debug(`Session data: `, req?.session)
         res.status(401).send('Unauthenticated user')
         return
@@ -108,12 +104,15 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
 
 export interface accessTokenRequestData {
     statusCode: number
-    body: accessTokenRequestSuccess
-        | accessTokenRequestFail
+    body: accessTokenData
+        | accessTokenFailData
         | any
 }
 
-export type accessTokenRequestSuccess = {
+/**
+ * Represents the data returned when the discord API returns a 200 status code.
+ */
+export type accessTokenData = {
     token_type: string,
     access_token: string,
     expires_in: number,
@@ -121,7 +120,10 @@ export type accessTokenRequestSuccess = {
     scope: string
 }
 
-export type accessTokenRequestFail = {
+/**
+ * Represents the data returned when the discord API returns a 400 status code.
+ */
+export type accessTokenFailData = {
     error: string,
     error_description: string
 }

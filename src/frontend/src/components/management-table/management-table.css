@@ -49,3 +49,13 @@
 }
 
 /*.management-table-head-row*/
+
+.management-table-button-wrapper {
+  /*padding: 1rem 0 1rem 0;*/
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}

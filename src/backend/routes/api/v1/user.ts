@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {getUsersFromCacheList, GetUsersFromCacheMap, processWhitelistProps} from "../../../cache";
+import {getUsersFromCacheList, getUsersCacheMap, processWhitelistProps} from "../../../cache";
 import {isAuthenticated} from "../../utils/utils";
 import {DiscordUsersDB, RolesDB} from "../../../database";
 import {defaultLogger} from "../../../logger";
@@ -19,7 +19,7 @@ router.get('/userid', async (req, res) => {
         return
     }
 
-    const userData = GetUsersFromCacheMap(true).get(req.session.discordUser.id)
+    const userData = getUsersCacheMap(true).get(req.session.discordUser.id)
     if (!userData) {
         res.status(401).send('User data was not stored in session.')
     }
@@ -63,7 +63,7 @@ router.get('/info', isAuthenticated, async (req, res) => {
         return
     }
 
-    const userDBData = GetUsersFromCacheMap(true).get(req.session.discordUser.id)
+    const userDBData = getUsersCacheMap(true).get(req.session.discordUser.id)
     const rolesDBData = await RolesDB.find()
 
     if (!userDBData) {
@@ -128,7 +128,7 @@ router.get('/whitelist', async (req, res) => {
         return
     }
 
-    const userDBData = GetUsersFromCacheMap(true).get(req.session.discordUser.id)
+    const userDBData = getUsersCacheMap(true).get(req.session.discordUser.id)
     const specialRolesDBData = await RolesDB.find()
 
     if (!userDBData) {

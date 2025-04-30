@@ -3,7 +3,7 @@
  */
 
 
-import {DiscordRole} from "../../../../shared-types/shared-types";
+import {DiscordRole} from "../../../../shared/shared-types";
 
 /**
  * Implemented roughly from

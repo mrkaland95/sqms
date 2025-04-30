@@ -23,5 +23,19 @@ function ManagementTable(props: {headerCells: ReactNode, children?: React.ReactN
         </div>)
 }
 
+/**
+ * Utility function for wrapping the buttons that performs actions on the edit table,
+ * such as adding an empty row, submitting data, etc.
+ * @param props
+ * @constructor
+ */
+export function ButtonWrapper(props: {children?: React.ReactNode}) {
+    return (
+        <div className={"management-table-button-wrapper"}>
+            {props.children}
+        </div>
+    )
+}
+
 
 export default ManagementTable;

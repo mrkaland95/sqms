@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 
 async function fetchUserData(): Promise<responseData> {
-    const response = await fetch("http://localhost:5000/api/v1/user/userinfo", {
+    const response = await fetch("/api/v1/api/v1/user/userinfo", {
         credentials: "include"
     })
 

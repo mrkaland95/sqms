@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import './options.css'
+import './css/options-dropdown.css'
 
 
 function OptionsDropdown(props: {buttonText?: string, children?: React.ReactNode, size?: number}) {
@@ -27,8 +27,10 @@ function OptionsDropdown(props: {buttonText?: string, children?: React.ReactNode
         <div className={`options-menu-wrapper ${menuOpen ? 'open' : ''}`} ref={dropdownRef}>
             <button
                 className={`options-menu-button ${menuOpen ? 'open' : ''}`}
-                type={"button"} onClick={toggleMenu}
+                type={"button"}
+                onClick={toggleMenu}
                 style={{fontSize: props.size}}>
+
                 {optionsIcon}
             </button>
             <ul className={`options-menu-content ${menuOpen ? 'open' : ''}`}>
@@ -42,7 +44,7 @@ export function OptionsItem(props: {title?: string, onClick?: () => void, leftIc
     return (
     <li style={{cursor: "pointer"}} className={"options-menu-item"} title={props.title} onClick={() => props.onClick && props.onClick()}>
         <span>{props.leftIcon}</span>
-        {props.children}
+            {props.children}
         <span>{props.rightIcon}</span>
     </li>)
 }

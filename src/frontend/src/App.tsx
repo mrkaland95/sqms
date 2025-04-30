@@ -11,8 +11,8 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import AdminGroups from "./pages/AdminGroups";
 import DiscordRoleEdit from "./pages/DiscordRoleEdit";
 import ListEdit from "./pages/ListEdit";
-import SidebarNew from "./components/sidebar/Sidebar";
-import {NavBar} from "./components/navbar/NavBar";
+import SidebarNew from "./pages/sidebar/Sidebar";
+import {NavBar} from "./pages/navbar/NavBar";
 import AuthProvider, {useAuth} from "./components/AuthProvider";
 import user from "./pages/User";
 

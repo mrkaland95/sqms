@@ -12,12 +12,11 @@ function Home() {
         <div >
             <p>
             <style>{`p { margin auto; } `}</style>
-            TT Whitelist Management Website.
             You can log in here to manage and register steamIDs for whitelisting purposes.
             </p>
         </div>
 
-        <DiscordAuthentication></DiscordAuthentication>
+        {/*<DiscordAuthentication></DiscordAuthentication>*/}
     </div>
     )
 }

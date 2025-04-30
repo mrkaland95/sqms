@@ -17,16 +17,17 @@ function AuthenticateWithDiscordButton() {
  * Performs the actual authentication process to the server.
  */
 export function performLoginWithAuth() {
-    const baseRedirectLink = new URL('http://localhost:5000/api/v1/auth/redirect')
+    // const baseRedirectLink = new URL('/api/v1/auth/redirect', window.location.origin)
+    const baseRedirectLink = new URL('/api/v1/auth/redirect', 'http://localhost:5000')
     const authString: string = generateRandomString()
     localStorage.setItem('oauth-string', authString)
 
     baseRedirectLink.searchParams.set('state', btoa(authString))
 
     window.location.assign(baseRedirectLink.toString())
-    // TODO remove this hardcode and take it in as an .env
 }
 
+    // TODO remove this hardcode and take it in as an .env
 
 
 

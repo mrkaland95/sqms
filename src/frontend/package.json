@@ -1,5 +1,6 @@
 {
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@dnd-kit/core": "^6.2.0",
     "@dnd-kit/sortable": "^9.0.0",
@@ -11,7 +12,7 @@
     "@types/node": "^16.18.119",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "axios": "^1.7.7",
+    "axios": "1.8.2",
     "bootstrap": "^5.3.3",
     "framer-motion": "^11.12.0",
     "react": "18.3.1",
@@ -48,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11"
   }
 }

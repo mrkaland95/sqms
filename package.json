@@ -1,6 +1,6 @@
 {
   "name": "squad-whitelist-management-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "author": "Flaxelaxen <https://github.com/mrkaland95>",
   "description": "Web server and frontend to manage whitelisting and admin permissions for a Squad game server.",
@@ -27,8 +27,5 @@
   },
   "devDependencies": {
     "typescript": "5.6.3"
-  },
-  "dependencies": {
-    "nanoid": "^5.0.9"
   }
 }

@@ -2,7 +2,7 @@ import * as mongoose from "mongoose";
 import { Document } from "mongoose";
 import {defaultLogger} from "./logger";
 import {randomUUID} from "node:crypto";
-import {DiscordRole, ListEndpoint, WebsiteRole} from "../shared-types/shared-types";
+import {DiscordRole, ListEndpoint, PermissionMapping, WebsitePermissions, WebsiteRole} from "../shared/shared-types";
 
 
 /*
@@ -82,25 +82,27 @@ export interface ILog extends Document {
 }
 
 
-export interface IDiscordRole extends DiscordRole, Document {
-}
 
 export interface IAPIKey extends Document {
     APIKey: string
 }
 
-export interface IWebsiteRole extends WebsiteRole, Document {
-
-}
 
 
 /*
 ListName: Represents the name of an endpoint to retrieve a last, i.e. /lists/:ListName
 AdminGroups: The in game admin groups that a list will use.
+*/
 
-// TODO this may have to be expanded in the future.
+/**
+ * Utility interfaces for working with mongoose to ensure type safety and allow the auto complete to use the mongoose methods.
+ * These extend from the shared interfaces between the front-end and back-end, as the DB-specific methods aren't required for the front-end to use.
  */
+
+export interface IDiscordRole extends DiscordRole, Document {}
 export interface IListEndpoint extends ListEndpoint, Document {}
+export interface IPermissionMapping extends PermissionMapping, Document {}
+export interface IWebsiteRole extends WebsiteRole, Document {}
 
 
 /**
@@ -136,8 +138,8 @@ const discordUserSchema = new mongoose.Schema<IDiscordUser>({
         isLinkedToSteam: {type: Boolean, required: false, default: false }
     },
     Enabled: { type: Boolean, required: true },
-    }, {
-        timestamps: true
+},  {
+    timestamps: true
     }
 );
 
@@ -147,12 +149,11 @@ const adminGroupsSchema = new mongoose.Schema<IAdminGroup>({
     GroupID: { type: String, required: true },
     Permissions: { type: [String], required: true, enum: Object.values(InGameAdminPermissions) },
     Enabled: { type: Boolean, required: true, default: true },
-    // I.e. all the user's whitelist slots will only get used for a list if it contains this group.
+    // I.e., all the user's whitelist slots will only get used for a list if it contains this group.
     IsWhitelistGroup: { type: Boolean, required: true, default: false}
-    }, {
-        timestamps: true
-    }
-)
+}, {
+    timestamps: true
+})
 
 
 const inGameRoleSchema = new mongoose.Schema<IPrivilegedRole>({
@@ -186,7 +187,7 @@ const listSchema = new mongoose.Schema<IListEndpoint>({
     ListName: { type: String, required: true, unique: true },
     ListID: { type: String, required: true, unique: true },
     AdminGroups: { type: [adminGroupsSchema], required: true, default: [] },
-    // I.e. if all users that has ANY role mapped to the admin group, should be enabled for this list.
+    // I.e., if all users that have ANY role mapped to the admin group, should be enabled for this list.
     AllRolesEnabled: { type: Boolean, required: true, default: true },
     Enabled: { type: Boolean, required: true, default: true }
     }, {
@@ -203,8 +204,29 @@ const loggingSchema = new mongoose.Schema<ILog>({
     }
 )
 // Represents roles and permission for performing tasks on the website.
-const websiteRoleSchema = new mongoose.Schema({
-    RoleID: { type: String, required: true, unique: true },
+const websiteRoleSchema = new mongoose.Schema<IWebsiteRole>({
+    roleID: { type: String, required: true, unique: true, default: randomUUID },
+    roleName: { type: String, required: true, unique: true },
+    permissions: {
+        type: [String],
+        required: true,
+        validate: {
+            validator: (permissions: WebsitePermissions[]) =>
+                permissions.every(p => Object.values(WebsitePermissions).includes(p)),
+            message: props => `${props.value} contains invalid permissions.`,
+        },
+    },
+    description: { type: String, required: true },
+}, {
+    timestamps: true
+})
+
+const discordRoleToWebsiteRoleBindingSchema = new mongoose.Schema<IPermissionMapping>({
+    permissionID: { type: String, required: true, unique: true },
+    discordRoleID: { type: String, required: true, unique: true },
+    mappedWebsiteRole: { type: websiteRoleSchema, required: true },
+}, {
+    timestamps: true,
 })
 
 
@@ -215,6 +237,8 @@ export const APIKeysDB = mongoose.model('APIKeys', apiSchema)
 export const LoggingDB = mongoose.model('Logs', loggingSchema)
 export const AllServerRolesDB = mongoose.model('AllServerRoles', allServerRolesSchema)
 export const ListsDB = mongoose.model('Lists', listSchema)
+export const WebsiteRolesDB = mongoose.model('WebsiteRoles', discordRoleToWebsiteRoleBindingSchema)
+export const DiscordRoleToWebsiteRoleDB = mongoose.model('WebsiteRoles', discordRoleToWebsiteRoleBindingSchema)
 
 export async function initializeWhitelistGroup() {
     try {

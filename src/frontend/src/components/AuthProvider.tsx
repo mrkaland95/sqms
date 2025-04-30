@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import {fetchUserData} from "../utils/fetch";
-import {UserResponseData} from "../../../shared-types/shared-types";
+import {UserResponseData} from "../../../shared/shared-types";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
@@ -14,11 +14,9 @@ function AuthProvider({ children } : AuthProviderProps) {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // const url = "http://localhost:5000/api/v1"
-
     async function logout() {
         try {
-            const response = await fetch('http://localhost:5000/api/v1/auth/logout', {
+            const response = await fetch('/api/v1/auth/logout', {
                 credentials: "include",
                 method: 'POST',
             })

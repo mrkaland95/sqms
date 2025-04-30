@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
-import '../css/dropdown.css'
+import '../../css/dropdown.css'
 
 function CustomDropDownMenu({buttonText, children, buttonClass}: dropDownProps) {
     const[menuOpen, setMenuOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        const handleClickOutside = (event: any) => {
+        function handleClickOutside(event: any) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setMenuOpen(false);
             }
-        };
+        }
+
         document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        // return () => {
+        //     document.removeEventListener('mousedown', handleClickOutside);
+        // };
     }, []);
 
 

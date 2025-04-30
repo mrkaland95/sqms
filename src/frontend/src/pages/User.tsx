@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import steamLogo from '../public/steam-icon-wide.png'
 import {getAdminGroups, getUserSteamID, postUserSteamID} from "../utils/fetch";
 import {useQuery} from "@tanstack/react-query";
-import {DiscordUser, UserResponseData} from "../../../shared-types/shared-types";
+import {DiscordServerUser, UserResponseData} from "../../../shared/shared-types";
 
 
 axios.defaults.withCredentials = true

@@ -73,26 +73,35 @@ router.post('/', isAuthenticated, async (req, res) => {
 })
 
 
-router.delete('/:group',  async (req, res) => {
-    if (!req.session?.discordUser) {
-        res.sendStatus(500)
-        return
-    }
-
-    if (!req.body?.id) {
-        res.sendStatus(400)
-        return
-    }
-    try {
-        await AdminGroupsDB.deleteOne({GroupID: req.body.id})
-    } catch (e) {
-        defaultLogger.error(`Error when deleting role: `, e)
-        res.sendStatus(500)
-        return
-    }
-
-    res.sendStatus(200)
+router.delete('/', async (req, res) => {
+    res.sendStatus(400).send('Delete requests must be sent as parameters')
 })
+
+
+router.delete('/:groupID', isAuthenticated, async (req, res) => {
+    const groupID = req.params.groupID;
+    console.log(groupID)
+
+    if (!groupID) {
+        res.sendStatus(400);
+        return
+    }
+
+    try {
+        const result = await AdminGroupsDB.deleteOne({ GroupID: groupID });
+        if (result.deletedCount === 0) {
+            res.sendStatus(404);
+            return
+        }
+
+        defaultLogger.info(`Successfully deleted group '${groupID}' from DB.`)
+
+        res.sendStatus(200);
+    } catch (e) {
+        defaultLogger.error(`Error when deleting group '${groupID}':`, e);
+        res.sendStatus(500);
+    }
+});
 
 
 

@@ -3,12 +3,9 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
-import {getAdminGroups, postAdminGroups} from "../utils/fetch";
+import {deleteAdminGroup, getAdminGroups, postAdminGroups} from "../utils/fetch";
 import {cancelButtonColor, confirmButtonColor} from "../utils/utils";
 import ToggleButton from "../components/Toggle-Button";
-import {EditableTable} from "../components/generic-edit-table/GenericEditTable";
-import {EditableDataGrid} from "../components/generic-edit-table/GenericEditTable2";
-import {AdminGroup} from "../../../shared-types/shared-types";
 import ManagementTable from "../components/management-table/ManagementTable";
 import OptionsDropdown, {OptionsItem} from "../components/dropdowns/OptionsDropdown";
 
@@ -131,38 +128,40 @@ function AdminGroupForm({ adminGroups}: AdminGroupFormProps) {
 
         if (!confirm.isConfirmed) return;
 
-        setAdminGroupRows((prev) =>
-            prev.filter((row) => row.GroupID !== group.GroupID)
-        );
-
+        // If the group wasn't saved in the database, delete it and return
         if (!group._id) {
             await Swal.fire({
                 title: "Success",
                 text: `Successfully deleted group: ${group.GroupName}`,
                 icon: "success",
             });
-            return;
+        } else {
+            try {
+                const response = deleteAdminGroup(group.GroupID)
+                console.log(response)
+                // const response = await axios.delete(
+                //     "/api/v1/admingroups",
+                //     { data: { id: group.GroupID } }
+                // );
+
+                await Swal.fire({
+                    title: "Success",
+                    text: `Successfully deleted group: ${group.GroupName}`,
+                    icon: "success",
+                });
+            } catch (e) {
+                await Swal.fire({
+                    title: "Error",
+                    text: "Error occurred when attempting to delete the group.",
+                    icon: "warning",
+                });
+                return
+            }
         }
 
-        const response = await axios.delete(
-            "http://localhost:5000/api/v1/admingroups",
-            { data: { id: group.GroupID } }
+        setAdminGroupRows((prev) =>
+            prev.filter((row) => row.GroupID !== group.GroupID)
         );
-
-        if (response.statusText !== "OK") {
-            await Swal.fire({
-                title: "Error",
-                text: "Error occurred when attempting to delete the group.",
-                icon: "warning",
-            });
-            return;
-        }
-
-        await Swal.fire({
-            title: "Success",
-            text: `Successfully deleted group: ${group.GroupName}`,
-            icon: "success",
-        });
     }
 
     function onInputChange(index: number, e: React.ChangeEvent<HTMLInputElement>) {

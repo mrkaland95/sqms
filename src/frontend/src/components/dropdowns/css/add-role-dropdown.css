@@ -1,0 +1,52 @@
+
+.add-role-dropdown-wrapper {
+  position: relative;
+  display: flex;
+
+}
+
+
+.add-role-dropdown-content {
+  position: absolute;
+  margin: 0;
+  visibility: hidden;
+  top: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #434b5a;
+  color: #dddddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  /*padding: 0.5rem 0;*/
+  padding: 0.5rem;
+  min-width: 6rem;
+  list-style: none;
+  transition: visibility 0s, max-height 0.2s ease;
+  white-space: nowrap;
+}
+
+.add-role-dropdown-content.open {
+  visibility: visible;
+  z-index: 5000;
+}
+
+.add-role-dropdown-content ul {
+  text-decoration: none;
+}
+
+.add-role-dropdown-item {
+  border-radius: 5px;
+  width: 6rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.add-role-dropdown-item:hover {
+  background: #5c6071;
+}

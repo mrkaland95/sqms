@@ -1,9 +1,9 @@
 import './navbar.css'
-import squadLogo from  '../../public/squad-logo.png'
+import squadLogo from '../../public/squad-logo.png'
 import defaultDiscordLogo from '../../public/discordblue.png'
 import { CiLogout } from "react-icons/ci";
-import { performLoginWithAuth} from "../Login";
-import {useAuth} from "../AuthProvider";
+import { performLoginWithAuth} from "../../components/Login";
+import {useAuth} from "../../components/AuthProvider";
 import React, {useEffect, useRef, useState} from "react";
 
 

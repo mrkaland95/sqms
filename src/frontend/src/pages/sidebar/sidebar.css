@@ -28,6 +28,7 @@
 .sidebar-container.open {
   visibility: visible;
   opacity: 1;
+  min-width: 0;
   max-width: 400px;
   width: 300px;
   transform: translateX(0);
@@ -103,12 +104,15 @@
 }
 
 .sidebar-element-wrapper-new.text {
-  display: flex;
+  /*display: flex;*/
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 1rem;
   font-weight: var(--sidebar-font-weight);
+  width: 100%;
+  min-width: 0; /* ← this is the fix */
 }
 
 .sidebar-element-wrapper-new a {
@@ -123,3 +127,6 @@
   background-color: var(--sidebar-hover-bg-color);
 }
 
+.sidebar-element-wrapper-new.icon { outline: 1px solid red; }
+.sidebar-element-wrapper-new.text { outline: 1px solid green; }
+.sidebar-dropdown-icon { outline: 1px solid blue; }

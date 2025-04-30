@@ -1,17 +1,13 @@
+// import {IDiscordRole} from "../backend/database";
 
 /**
  * This file defines types that are shared between the frontend and backend.
  */
 
-
 /*
 Pulled and defined from:
 https://squad.fandom.com/wiki/Server_Administration
  */
-
-
-import {IDiscordRole} from "../backend/database";
-
 export enum InGameAdminPermissions {
     CHANGE_MAP = "changemap",
     CAN_SEE_ADMIN_CHAT = "canseeadminchat",
@@ -34,8 +30,8 @@ export enum InGameAdminPermissions {
 }
 
 /*
-A week day corresponding to a number, particularly to inbuilt Javascript
-Date.getDay() method.
+A week day corresponding to a number,
+specifically to the inbuilt Javascript Date.getDay() method.
  */
 export enum WeekDays {
     Sunday = 0,
@@ -47,7 +43,10 @@ export enum WeekDays {
     Saturday = 6
 }
 
-export interface DiscordUser {
+/**
+ * Represents a user in the discord server.
+ */
+export interface DiscordServerUser {
     DiscordID: string;
     DiscordName: string;
     Roles: string[];
@@ -105,31 +104,67 @@ export interface APIKey {
     APIKey: string
 }
 
+/**
+ * Represents the data sent to a user on the front end.
+ */
 export interface UserResponseData {
     isAuthenticated: boolean,
     isAdmin: boolean,
-    discordUserName: string,
-    discordAvatar: string,
-    discordGlobalName: string,
-    userPrivilegedDiscordRoles: IDiscordRole[]
+    discordUserName: string, // A user's unique discord username
+    discordAvatar: string, // An identifier used to retrieve their avatar from the discord API
+    discordGlobalName: string, // A user's global display name
+    userPrivilegedDiscordRoles: DiscordRole[]
     userSteamID: string
     userWhitelistSlots: number
     userWhitelistActiveDays: WeekDays[]
     userWhitelistedSteam64IDs: { steamID: string, name?: string }[]
+    websitePermissions?: WebsitePermissions[]
+}
+
+
+export interface PermissionMapping {
+    permissionID: string,
+    discordRoleID: string,
+    mappedWebsiteRole: WebsiteRole
 }
 
 export interface WebsiteRole {
     roleID: string
-    name: string
+    roleName: string
+    description: string
     permissions: WebsitePermissions[]
 }
 
-export enum WebsitePermissions {
+export enum WebsitePermissions  {
     ALL = '*',
-    GAME_SERVER_PERMISSIONS_MANAGE = 'game_server_permissions_manage'
-    // GAME_SERVER_PERMISSIONS_VIEW = 'GAME_SERVER_PERMISSIONS_VIEW',
-    // GAME_SERVER_PERMISSIONS_CREATE = 'GAME_SERVER_PERMISSIONS_CREATE',
-
-
-
+    GAME_SERVER_PERMISSIONS_VIEW = 'game_server_permissions:view',
+    GAME_SERVER_PERMISSIONS_EDIT = 'game_server_permissions:edit',
+    GAME_SERVER_PERMISSIONS_DELETE = 'game_server_permissions:delete',
 }
+
+export const WebsitePermissionMetadata: Record<WebsitePermissions, {
+    label: string;
+    description: string;
+    category?: string;
+}> = {
+    [WebsitePermissions.ALL]: {
+        label: 'All Permissions',
+        description: 'Grants all permissions on the website.',
+        category: 'General',
+    },
+    [WebsitePermissions.GAME_SERVER_PERMISSIONS_VIEW]: {
+        label: 'View Game Server Permissions',
+        description: 'Allows viewing of game server permission settings.',
+        category: 'Game Server',
+    },
+    [WebsitePermissions.GAME_SERVER_PERMISSIONS_EDIT]: {
+        label: 'Edit Game Server Permissions',
+        description: 'Allows creating or editing game server permission rules.',
+        category: 'Game Server',
+    },
+    [WebsitePermissions.GAME_SERVER_PERMISSIONS_DELETE]: {
+        label: 'Delete Game Server Permissions',
+        description: 'Allows deletion of game server permission rules.',
+        category: 'Game Server',
+    },
+};

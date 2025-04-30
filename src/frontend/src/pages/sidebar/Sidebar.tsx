@@ -4,7 +4,7 @@ import { GoHomeFill } from "react-icons/go";
 import { IoChevronDown } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { RiComputerFill } from "react-icons/ri";
-import {useAuth} from "../AuthProvider";
+import {useAuth} from "../../components/AuthProvider";
 
 
 function Sidebar({open}: SideBarProps) {
@@ -38,6 +38,7 @@ function Sidebar({open}: SideBarProps) {
                             <SidebarAnchor buttonText={"Admin Groups"} href={"/admingroups"}/>
                             <SidebarAnchor buttonText={"Discord Role Mapping"} href={"/rolesedit"}/>
                             <SidebarAnchor buttonText={"List Endpoints"} href={"/listsedit"}/>
+                            <SidebarAnchor buttonText={"TESTING PIECE OF SHIT IDK MAN"} href={"/listsedit"}/>
                         </SidebarDropdown>
                     )}
 
@@ -47,7 +48,7 @@ function Sidebar({open}: SideBarProps) {
 
                     {user?.isAdmin && (
                         <SidebarDropdown buttonText={"Website Management"}>
-                            <SidebarAnchor buttonText={"Roles"} href={"/role-management"}/>
+                            <SidebarAnchor buttonText={"Roles"} href={"/website-roles"}/>
                         </SidebarDropdown>
                     )}
                 </ul>

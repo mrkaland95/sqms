@@ -1,5 +1,4 @@
 import {
-    DiscordRole,
     DiscordUsersDB,
     IAdminGroup,
     IDiscordRole,
@@ -8,10 +7,11 @@ import {
     IPrivilegedRole,
     ListsDB,
     RolesDB
-} from "./schema";
+} from "./database";
 import {Client, GatewayIntentBits, GuildMember} from "discord.js";
 import {Logger, LoggingLevel} from "./logger";
 import env from "./load-env";
+import {DiscordRole} from "../shared/shared-types";
 
 /*
 File responsible for handling caches of data, and initializing the discord and database clients.
@@ -37,7 +37,6 @@ export const discordClient = new Client({
  * Returns a pointer to the users cache after the refresh has been performed.
  */
 export async function refreshUsersCache(userData = null) {
-
     let discordUsers = userData ? userData : await DiscordUsersDB.find();
 
     usersCache.clear()
@@ -63,10 +62,11 @@ export async function generateLists(listsData: IListEndpoint[], rolesData: IPriv
  * Dynamically generates a permission list based on admin groups assigned to a specific list and discord roles.
  *
  * An admin group is a name mapped to a set of in-game permissions,
- * So for example you could have an admin group with name "Whitelist", with an array of permissions ["reserve"]
+ * So for example, you could have an admin group with the name "Whitelist", with an array of permissions ["reserve"]
  * Which would give ever user with that permission whitelist/priority queue to the game server.
  *
- * For example, if a list has admin group "X" assigned to it, then all users with a discord role that also has admin group "X"
+ * For example, if a list has admin group "X" assigned to it,
+ * then all users with a discord role that also has admin group "X"
  * assigned to it, will get their adminID added to the list endpoint, provided they have an adminID installed.
 
  * Additionally, if the list endpoint has the admin grouped marked with the "isWhitelistGroup" flag,
@@ -86,6 +86,7 @@ async function constructListFile(listData: IListEndpoint, rolesData: IPrivileged
         if (!group.Permissions.length) continue
 
         if (group.IsWhitelistGroup) {
+            // @ts-ignore
             whitelistGroup = group
         }
 
@@ -119,11 +120,11 @@ async function constructListFile(listData: IListEndpoint, rolesData: IPrivileged
         Add "admin" role of user.
         Currently this solution is rather flawed, as it allows a user have multiple in game admin groups, which can cause issues.
         My current idea is to perhaps have "significance" levels to the admin groups, where your highest one decides your in-game permissions, active days etc.
-
          */
+
         if (user.UserID64?.steamID) {
             for (const role of usersValidRoles) {
-                // We explicitly check against false, because we don't want to add the user if the "admingroup" is undefined.
+                // Explicitly check against false, because we don't want to add the user if the "admingroup" is undefined.
                 if (role?.AdminGroup?.IsWhitelistGroup === false) {
                     fBuffer.push(`Admin=${user.UserID64.steamID}:${role.AdminGroup.GroupName} // ${user.DiscordName}`)
                 }
@@ -182,7 +183,7 @@ export function getUsersFromCacheList(activeUsersOnly: boolean = true): IDiscord
     return users
 }
 
-export function GetUsersFromCacheMap(activeUsers: boolean = true) {
+export function getUsersCacheMap(activeUsers: boolean = true) {
     let users: Map<string, IDiscordUser> = new Map()
 
     if (activeUsers) {
@@ -223,8 +224,8 @@ async function retrieveAllDiscordMembers() {
 }
 
 /**
- * Retrieves all members from a specific guild.
- * @param guildID {string}
+ * Retrieves all "members"(Discord Users) from a specific guild(Server).
+ * @param guildID {string} id representing a single discord guild(Server)
  * @return discordMembers {GuildMember[]}
  */
 async function retrieveMembersFromGuild(guildID: string) {

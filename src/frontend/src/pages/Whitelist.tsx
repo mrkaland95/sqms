@@ -7,7 +7,7 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {IAdminGroup} from "./AdminGroups";
-import {getUsersWhitelist, postAdminGroups, postUserWhitelists} from "../utils/fetch";
+import {getUsersWhitelist, postAdminGroups, postUserWhitelists} from "../utils/data-fetch";
 import {nanoid} from "nanoid";
 import DragToSort from "../components/DragToSort";
 import OptionsDropdown, {OptionsDivider, OptionsItem} from "../components/dropdowns/OptionsDropdown";

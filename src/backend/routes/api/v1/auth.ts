@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {accessTokenData, requestAccessToken, requestDiscordUserData} from "../../utils/utils";
 import env from "../../../load-env";
-import {DiscordUser} from "../../../utils/types";
+import {DiscordAPIUser} from "../../../utils/types";
 import {defaultLogger} from "../../../logger";
 
 
@@ -83,7 +83,7 @@ router.get('/login', async (req, res) => {
 
     // If the status code was 200, it means the request was a success, and we can cast it.
     const accessTokenData = (accessTokenRequest.body as accessTokenData)
-    let discordUser: DiscordUser
+    let discordUser: DiscordAPIUser
 
     try {
         discordUser = await requestDiscordUserData(accessTokenData)

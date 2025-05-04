@@ -7,11 +7,12 @@ import {
     getAllDiscordRoles,
     getPrivilegedDiscordRoles,
     postPrivilegedDiscordRoles
-} from "../utils/fetch";
+} from "../utils/data-fetch";
 import Swal from "sweetalert2";
-import {AdminGroup, DiscordRole, PrivilegedRole} from "../../../shared-types/shared-types";
-import BaseEditTable from "../components/management-table/ManagementTable";
+import {AdminGroup, DiscordRole, PrivilegedRole} from "../shared/shared-types";
+import BaseEditTable, {ButtonWrapper} from "../components/management-table/ManagementTable";
 import OptionsDropdown, {OptionsItem} from "../components/dropdowns/OptionsDropdown";
+import AddRoleDropdown, {AddRoleDropdownItem} from "../components/dropdowns/AddRoleDropdown";
 
 
 
@@ -27,7 +28,7 @@ export default function DiscordRoleEdit() {
 
             },
             {
-                queryKey: ['allroles'],
+                queryKey: ['alldiscordroles'],
                 queryFn: getAllDiscordRoles
             }
         ]
@@ -55,9 +56,6 @@ function RoleEditForm({privilegedRoles, adminGroups, allDiscordRoles}: RoleEditP
     const [groups, setGroups] = useState<IAdminGroup[]>([...adminGroups]);
     const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
 
-    const [addRoleOpen, setAddRoleOpen] = useState(false);
-
-
     useEffect(() => {
         const roles = allDiscordRoles.filter(role => {
             return !privilegedRoles.find(pRole => pRole.RoleID === role.RoleID)
@@ -81,12 +79,9 @@ function RoleEditForm({privilegedRoles, adminGroups, allDiscordRoles}: RoleEditP
         })
     }
 
-    function onAddRoleDropdown() {
-        setAddRoleOpen(!addRoleOpen);
-    }
 
-    function onAddRoleClick(role: string) {
-        const clickedRole = allDiscordRoles.find(r => r.RoleName === role)
+    function onAddRoleClick(roleName: string) {
+        const clickedRole = allDiscordRoles.find(r => r.RoleName === roleName)
         if (!clickedRole) {
             return
         }
@@ -102,7 +97,6 @@ function RoleEditForm({privilegedRoles, adminGroups, allDiscordRoles}: RoleEditP
             ActiveDays: [],
         })
         setSpecialRoles(newSpecialRoles)
-        setAddRoleOpen(!addRoleOpen);
     }
 
     async function onSubmitRole() {
@@ -151,7 +145,7 @@ function RoleEditForm({privilegedRoles, adminGroups, allDiscordRoles}: RoleEditP
             <BaseEditTable headerCells={[
                 <th>Discord Role ID</th>,
                 <th>Role Name</th>,
-                <th>Admin Group</th>,
+                <th>Permission Group</th>,
                 <th>Active Days</th>,
                 <th>Whitelist Slots</th>,
                 <th>Enabled</th>,
@@ -259,7 +253,7 @@ function RoleEditForm({privilegedRoles, adminGroups, allDiscordRoles}: RoleEditP
                                 className={`steam-id-input`}
                                 value={role.WhitelistSlots}
                                 required={true}
-                                maxLength={4}
+                                // maxLength={4}
                                 onChange={(event) => {
                                     const updated = [...specialRoles]
 
@@ -292,8 +286,66 @@ function RoleEditForm({privilegedRoles, adminGroups, allDiscordRoles}: RoleEditP
                 )))}
 
             </BaseEditTable>
+            <ButtonWrapper>
+                <AddRoleDropdown buttonText={"Add Discord Role"}>
+                    {discordRoles
+                        .filter(role => role.RoleName !== "@everyone")
+                        .map((role) => (
+                            <AddRoleDropdownItem onClick={() => onAddRoleClick(role.RoleName)}>{role.RoleName}</AddRoleDropdownItem>
+                        ))
+                    }
+
+                </AddRoleDropdown>
+                    <button
+                        type={"button"}
+                        className={"default-button"}
+                        onClick={onSubmitRole}>
+                        Submit
+                    </button>
+            </ButtonWrapper>
         </div>
     )
+}
+
+
+
+/**
+ * Implemented roughly from
+ * https://youtu.be/IF6k0uZuypA?si=QJcQGmgaYTNSTeBv
+ */
+function DropDownMenu({discordRoles, onSubmit}: DropDownMenuProps) {
+
+    function DropDownItem(props: DropDownItemProps) {
+        return (
+            <div className={"drop-down-item"} onClick={(e) => props.onClick(props.children)}>
+                <span className={"icon-button"}>{props?.leftIcon}</span>
+                {props.children}
+                <span className={"icon-right"}>{props?.rightIcon}</span>
+            </div>
+        )
+    }
+
+    return (
+        <div className={"default-dropdown"}>
+            {discordRoles.map((role: DiscordRole) => (
+                <DropDownItem id={role.RoleID} children={role.RoleName} onClick={onSubmit} />
+            ))}
+        </div>)
+}
+
+
+interface DropDownMenuProps {
+    discordRoles: DiscordRole[]
+    onSubmit: (role: any) => void
+}
+
+
+interface DropDownItemProps {
+    id: string
+    leftIcon?: string
+    rightIcon?: string
+    onClick: (item: any) => void
+    children: any
 }
 
 

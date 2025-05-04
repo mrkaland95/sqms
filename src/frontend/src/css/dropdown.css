@@ -7,7 +7,7 @@
 
 .dropdown-menu-wrapper {
   position: relative;
-  /*display: inline-block;*/
+  display: inline-block;
 }
 
 .dropdown-menu-button {
@@ -17,11 +17,14 @@
   font-weight: 400;
   display: flex;
   border-radius: 5px;
-  /*border: #0053e7;*/
   border: 2px solid #0060ff;
   background-color: #0060ff;
-  color: #fff;
+  color: #FFFFFF;
   transition: background-color 0.1s;
+}
+.dropdown-menu-button:hover {
+  background-color: #064cb5;
+  /*border: 2px solid #faf600;*/
 }
 
 .dropdown-menu-button-icon {
@@ -29,10 +32,6 @@
   align-items: center;
 }
 
-.dropdown-menu-button:hover {
-  background-color: #064cb5;
-  /*border: 2px solid #faf600;*/
-}
 
 .dropdown-menu-wrapper.content {
   position: absolute;

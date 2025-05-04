@@ -1,11 +1,11 @@
 import {Events, GatewayIntentBits} from "discord.js";
 import 'dotenv/config'
-import webServerStart from "./web-server";
+import webServerMain from "./web-server";
 import env from "./load-env";
 import {
     discordClient,
     getAllUsersWithSpecialRoles, getUsersFromCacheList, getDiscordRoles,
-    refreshDiscordUsersAndRoles,
+    refreshDiscordGuildUsers,
     refreshListCache,
     refreshUsersCache, refreshDiscordRoles
 } from "./cache";
@@ -24,7 +24,7 @@ const logger = new Logger(LoggingLevel.DEBUG)
 
 async function main() {
     logger.info("Booting up whitelist management server...")
-    await webServerStart()
+    await webServerMain()
     await mongoose.connect(env.mongoDBConnectionString)
     await discordClient.login(env.discordAppToken)
 
@@ -41,7 +41,7 @@ async function main() {
 async function updateCaches() {
     await refreshUsersCache()
     await refreshDiscordRoles(env.discordGuildID)
-    await refreshDiscordUsersAndRoles()
+    await refreshDiscordGuildUsers()
     await refreshListCache()
 }
 

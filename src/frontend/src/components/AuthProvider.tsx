@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import {fetchUserData} from "../utils/fetch";
-import {UserResponseData} from "../../../shared/shared-types";
+import {fetchUserData} from "../utils/data-fetch";
+import {UserResponseData} from "../shared/shared-types";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 

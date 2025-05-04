@@ -1,7 +1,7 @@
 import {NextFunction, Response, Request} from "express";
 import {defaultLogger, Logger} from "../../logger";
-
-
+import {getUsersCacheMap, getDiscordUsersWebsitePermissions} from "../../cache";
+import {WebsitePermissions} from "../../../frontend/src/shared/shared-types";
 
 
 
@@ -97,8 +97,15 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
         res.status(401).send('Unauthenticated user')
         return
     }
-
     next()
+}
+
+export async function userHasPermission(discordID: string, requiredPermission: WebsitePermissions) {
+    const user = getUsersCacheMap(true).get(discordID)
+    if (!user) return false
+
+    const usersPermissions = await getDiscordUsersWebsitePermissions(user)
+    return usersPermissions.includes(requiredPermission)
 }
 
 
@@ -126,4 +133,9 @@ export type accessTokenData = {
 export type accessTokenFailData = {
     error: string,
     error_description: string
+}
+
+
+export interface CustomSessionData {
+
 }

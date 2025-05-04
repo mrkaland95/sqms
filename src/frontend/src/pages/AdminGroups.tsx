@@ -3,11 +3,13 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import {arrayMove, SortableContext, useSortable} from "@dnd-kit/sortable";
-import {deleteAdminGroup, getAdminGroups, postAdminGroups} from "../utils/fetch";
+import {deleteAdminGroup, getAdminGroups, postAdminGroups} from "../utils/data-fetch";
 import {cancelButtonColor, confirmButtonColor} from "../utils/utils";
-import ToggleButton from "../components/Toggle-Button";
+import ButtonSlider1 from "../components/buttons/ButtonSlider1";
 import ManagementTable from "../components/management-table/ManagementTable";
 import OptionsDropdown, {OptionsItem} from "../components/dropdowns/OptionsDropdown";
+import {WhitelistRow} from "./Whitelist";
+import {AdminGroup} from "../shared/shared-types";
 
 
 axios.defaults.withCredentials = true
@@ -254,7 +256,7 @@ function AdminGroupRow({row, index, onInputChange, onRowDelete, setAdminGroupRow
                 {Array.from(ALL_POSSIBLE_PERMISSIONS_MAP.keys()).map((permission: string) => (
                     <div>
                         <div style={{display: "flex", justifyContent: "left", alignItems: "center"}}>
-                        <ToggleButton
+                        <ButtonSlider1
                             checked={row.Permissions.includes(permission)}
                             onToggle={(e) => onGroupToggle(e, permission)}
                             id={`${index.toString()}_${permission}`}
@@ -279,7 +281,7 @@ function AdminGroupRow({row, index, onInputChange, onRowDelete, setAdminGroupRow
             </div>
         </td>
         <td>
-        <ToggleButton
+        <ButtonSlider1
             title={"Whether the group is enabled"}
             checked={row.Enabled} onToggle={(e)=> {
             setAdminGroupRows((prev: any) => {
@@ -314,7 +316,7 @@ function WhitelistGroup() {
             <td>
                 <div className={"admin-group-container permissions-wrapper"}>
                     <div style={{display: "flex", alignItems: "center"}}>
-                        <ToggleButton
+                        <ButtonSlider1
                             checked={true}
                             onToggle={(e) => e.preventDefault()}
                             id={"whitelist-checkbox"}
@@ -332,6 +334,18 @@ function WhitelistGroup() {
             <td></td>
         </tr>)
 }
+
+
+function getEmptyGroup(): AdminGroupRow {
+    return {
+        GroupID: crypto.randomUUID(),
+        GroupName: "",
+        Enabled: true,
+        IsWhitelistGroup: false,
+        Permissions: [],
+    };
+}
+
 
 
 function ButtonRow({onAddGroup}: any) {

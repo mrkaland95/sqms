@@ -1,6 +1,6 @@
 # Squad Whitelist Management Server
 
-This is a full stack project that lets admins/owners of a Squad server integrate with discord to allow users store steamIDs, which can then be used for generating permission lists used in-game by a Squad server. These are available through web-endpoints.
+This is a full-stack project that lets admins/owners of a Squad server integrate with discord to allow users store steamIDs, which can then be used for generating permission lists used in-game by a Squad server. These are available through web-endpoints.
 
 
 Built with:

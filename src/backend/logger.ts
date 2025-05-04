@@ -23,37 +23,37 @@ export class Logger {
     }
 
     debug(...message: any[]) {
-        if (this.loggerLevel >= LoggingLevel.DEBUG) {
+        if (this.loggerLevel <= LoggingLevel.DEBUG) {
             const output = this.#constructMsg(LoggingLevel.DEBUG)
             console.log(output, ...message, ']')
         }
     }
 
     info(...message: any[]) {
-        if (this.loggerLevel >= LoggingLevel.INFO) {
+        if (this.loggerLevel <= LoggingLevel.INFO) {
             const output = this.#constructMsg(LoggingLevel.INFO)
-            console.log(output, ...message)
+            console.log(output, ...message, ']')
         }
     }
 
     warning(...message: any[]) {
-        if (this.loggerLevel >= LoggingLevel.WARNING) {
+        if (this.loggerLevel <= LoggingLevel.WARNING) {
             const output = this.#constructMsg(LoggingLevel.WARNING)
-            console.warn(output, message)
+            console.warn(output, message, ']')
         }
     }
 
     critical(...message: any[]) {
-        if (this.loggerLevel >= LoggingLevel.CRITICAL) {
+        if (this.loggerLevel <= LoggingLevel.CRITICAL) {
             const output = this.#constructMsg(LoggingLevel.CRITICAL)
-            console.warn(output, message)
+            console.warn(output, message, ']')
         }
     }
 
     error(...message: any[]) {
-        if (this.loggerLevel >= LoggingLevel.ERROR) {
+        if (this.loggerLevel <= LoggingLevel.ERROR) {
             const output = this.#constructMsg(LoggingLevel.CRITICAL)
-            console.error(output, message)
+            console.error(output, message, ']')
         }
     }
 
@@ -68,5 +68,5 @@ export class Logger {
     }
 }
 
-export const defaultLogger = new Logger(LoggingLevel.INFO, true)
+export const defaultLogger = new Logger(LoggingLevel.DEBUG, true)
 

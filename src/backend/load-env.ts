@@ -1,4 +1,3 @@
-
 type EnvField = {
     field: string | number | boolean | undefined,
     errorMsg: string

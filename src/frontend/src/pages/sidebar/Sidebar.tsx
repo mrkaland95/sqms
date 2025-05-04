@@ -38,7 +38,6 @@ function Sidebar({open}: SideBarProps) {
                             <SidebarAnchor buttonText={"Admin Groups"} href={"/admingroups"}/>
                             <SidebarAnchor buttonText={"Discord Role Mapping"} href={"/rolesedit"}/>
                             <SidebarAnchor buttonText={"List Endpoints"} href={"/listsedit"}/>
-                            <SidebarAnchor buttonText={"TESTING PIECE OF SHIT IDK MAN"} href={"/listsedit"}/>
                         </SidebarDropdown>
                     )}
 
@@ -48,7 +47,7 @@ function Sidebar({open}: SideBarProps) {
 
                     {user?.isAdmin && (
                         <SidebarDropdown buttonText={"Website Management"}>
-                            <SidebarAnchor buttonText={"Roles"} href={"/website-roles"}/>
+                            <SidebarAnchor buttonText={"Permission Management"} href={"/website-roles"}/>
                         </SidebarDropdown>
                     )}
                 </ul>

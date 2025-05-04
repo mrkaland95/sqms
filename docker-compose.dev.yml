@@ -1,0 +1,18 @@
+services:
+  frontend:
+    volumes:
+      - .src/frontend:/app
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env.dev
+
+  backend:
+    volumes:
+      - src/backend:/app
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env.dev
+
+

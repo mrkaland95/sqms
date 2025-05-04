@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {isAuthenticated} from "../../utils/utils";
 import {ListsDB} from "../../../database";
-import {ListEndpoint} from "../../../../shared-types/shared-types";
+import {ListEndpoint} from "../../../../frontend/src/shared/shared-types";
 import {defaultLogger} from "../../../logger";
 import {refreshListCache} from "../../../cache";
 
@@ -9,7 +9,6 @@ const router = Router()
 
 router.get('/', isAuthenticated, async (req, res) => {
     const listEndpoints = await ListsDB.find()
-
     res.json(listEndpoints)
 })
 
@@ -19,7 +18,6 @@ router.post('/', isAuthenticated, async (req, res) => {
 
     try {
         for (const list of listEndpoints) {
-
             if (!list?.ListID) {
                 list.ListID = crypto.randomUUID()
             }
@@ -39,7 +37,6 @@ router.post('/', isAuthenticated, async (req, res) => {
             })
         }
     } catch (err) {
-        // defaultLogger.error(err)
         console.error(err)
         res.sendStatus(400)
         return
@@ -49,6 +46,13 @@ router.post('/', isAuthenticated, async (req, res) => {
     await refreshListCache()
 })
 
+router.delete('/:list', isAuthenticated, async (req, res) => {
+
+
+
+
+
+})
 
 
 

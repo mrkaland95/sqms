@@ -5,12 +5,11 @@
 
 }
 
-
 .add-role-dropdown-content {
+  visibility: hidden;
   position: absolute;
   margin: 0;
-  visibility: hidden;
-  top: 110%;
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   background-color: #434b5a;

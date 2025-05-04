@@ -5,8 +5,17 @@ import {ClientUser} from "discord.js";
 
 declare module 'express-session' {
     interface SessionData {
-        discordUser: DiscordUser
+        discordUser: DiscordAPIUser
         isAuthenticated: boolean
+        tokenData: {
+            token_type: string,
+            access_token: string,
+            expires_in: number,
+            refresh_token: string,
+            scope: string,
+        }
+        // accessToken?: string
+        // refreshToken?: string
         user: any
         oAuthState?: string
     }
@@ -18,10 +27,10 @@ declare module 'express-session' {
  * Retrieved from here:
  * https://discord.com/developers/docs/resources/user
  *
- * Do note that a (Global) Discord User is *not* the same thing as a "GuildMember" used to the rest of discordjs.
- * A GuildMember represents a user in that specific server("guild).
+ * Do note that a (Global) Discord User is *not* the same thing as a "GuildMember" used to the rest of discord.js.
+ * A GuildMember represents a user in that specific server("guild").
  */
-export type DiscordUser = {
+export type DiscordAPIUser = {
     id: string,
     username: string,
     discriminator: string,

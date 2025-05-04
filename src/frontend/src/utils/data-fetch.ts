@@ -2,11 +2,12 @@ import axios from "axios";
 import {AdminGroupRow} from "../pages/AdminGroups";
 import {WhitelistResponseData, WhitelistRow} from "../pages/Whitelist";
 import {IPrivilegedRole} from "../pages/DiscordRoleEdit";
-import {ListEndpoint, UserResponseData} from "../../../shared/shared-types";
+import {ListEndpoint, PermissionMapping, UserResponseData, WebsiteRole} from "../shared/shared-types";
 
 
 const baseURL = "http://localhost:5000";
 const baseURL2 = "http://localhost:5000/api/v1";
+const APIBase = '/api/v1'
 
 axios.defaults.withCredentials = true;
 
@@ -115,7 +116,7 @@ export async function postPrivilegedDiscordRoles(roles: IPrivilegedRole[]) {
 }
 
 export async function getListEndpoints() {
-    const url = `/api/v1/listedit`
+    const url = `/api/v1/list-edit`
     const res = await axios.get(url)
 
     if (res.status != 200) {
@@ -126,7 +127,7 @@ export async function getListEndpoints() {
 }
 
 export async function postListEndpoints(lists: ListEndpoint[]) {
-    const url = `/api/v1/listedit`
+    const url = `/api/v1/list-edit`
     const result = await axios.post(url, lists)
 
     if (result.status != 200) {
@@ -149,22 +150,62 @@ export async function fetchUserData(): Promise<UserResponseData> {
     return response.json()
 }
 
+export async function getWebsiteRoles() {
+    const url = '/api/v1/website-management/website-roles'
+    const response = await axios.get(url)
+
+    if (response.status != 200) {
+        throw new Error("Unable to fetch website roles")
+    }
+
+    return response.data
+}
+
+export async function getRoleMapping() {
+    const url = '/api/v1/website-management/role-mapping'
+    const response = await axios.get(url)
+
+    if (response.status != 200) {
+        throw new Error("Unable to fetch role mapping")
+    }
+
+    return response.data
+}
+
+export async function postWebsiteRoles(roles: WebsiteRole[]) {
+    const url = '/api/v1/website-management/website-roles'
+    const response = await axios.post(url, {
+        data: roles
+    })
+
+    if (response.status != 200) {
+        throw new Error("Unable to update website roles")
+    }
+
+    return response
+}
 
 
+export async function postRoleMapping(roleMapping: PermissionMapping[]) {
+    const url = '/api/v1/website-management/role-mapping'
+    const response = await axios.post(url, {
+        data: roleMapping
+    })
 
+    if (response.status != 200) {
+        throw new Error("Unable to update role mapping")
+    }
 
+    return response
+}
 
+export async function deleteWebsiteRoleByID(roleID: string) {
+    const url = `/api/v1/website-management/website-roles/${roleID}`
+    const response = await axios.delete(url)
 
-// export async function logoutRequest() {
-//     const response = await axios.post(baseURL2 + "/auth/logout")
-//
-//     console.log(response)
-//
-//     if (response.status !== 200) {
-//         throw new Error("Something went wrong when attempting to logout")
-//     }
-//
-//     return response
-//
-// }
-//
+    if (response.status != 200) {
+        throw new Error("Unable to delete role mapping")
+    }
+
+    return response
+}

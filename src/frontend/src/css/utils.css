@@ -1,0 +1,14 @@
+:root {
+  --primary-color: #2c333d;
+}
+
+/*
+Utility function for adding a top margin.
+*/
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}

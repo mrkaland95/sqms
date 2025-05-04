@@ -1,0 +1,47 @@
+.permissions-selector {
+  padding: 1rem;
+}
+
+.permission-category {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.category-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  gap: 0.5rem;
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+.category-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  padding-left: 1rem;
+  border-left: 2px solid #ccc;
+  margin-left: 0.5rem;
+  position: relative;
+}
+
+.category-content.open {
+  max-height: 1000px; /* large enough to fit content */
+}
+
+.permission-list {
+  list-style: none;
+  padding-left: 0.5rem;
+}
+
+.permission-item {
+  margin-bottom: 0.5rem;
+}

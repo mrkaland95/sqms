@@ -53,7 +53,6 @@ function UserNotLoggedInElement() {
 }
 
 
-
 function LoggedInDropdownMenu() {
     const [menuOpen, setMenuOpen] = useState(false);
     const user = useAuth().user
@@ -94,19 +93,14 @@ function LoggedInDropdownMenu() {
 
 
 function LoggedInMenuText(props: {children?: React.ReactNode, onClick?: () => void, leftIcon?: React.ReactNode}) {
-    if (props.onClick) {
-        return (
-            <li style={{cursor: "pointer"}} className={"logged-in-menu-item"} onClick={() => {props.onClick && props.onClick()}}>
-                <span className={"logged-in-menu-item icon"}>{props.leftIcon}</span>
-                <span className={"logged-in-menu-item text"}>{props.children}</span>
-            </li>)
-    } else {
-        return (
-            <li className={"logged-in-menu-item"}>
-                <span className={"logged-in-menu-item icon"}>{props.leftIcon}</span>
-                <span className={"logged-in-menu-item text"}>{props.children}</span>
-            </li>)
-    }
+
+    const cursorStyle = props.onClick ? "pointer" : "default"
+
+    return (
+        <li style={{cursor: cursorStyle}} className={"logged-in-menu-item"} onClick={() => {props.onClick && props.onClick()}}>
+            <span className={"logged-in-menu-item icon"}>{props.leftIcon}</span>
+            <span className={"logged-in-menu-item text"}>{props.children}</span>
+        </li>)
 }
 
 
@@ -120,10 +114,6 @@ function LoggedInMenuLink(props: {leftIcon: React.ReactNode, children?: React.Re
     </li>)
 }
 
-
-function UserButton({}: {imageSrc: string}) {
-
-}
 
 
 function NavbarAnchorElement({title, href, text}: NavbarAnchorProps) {

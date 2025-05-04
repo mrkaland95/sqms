@@ -1,7 +1,7 @@
 import {ChangeEvent} from "react";
 
 
-export default function ToggleButton({id, key, title, checked, onToggle, disabled}: toggleSwitchProps) {
+export default function ButtonSlider1({id, key, title, checked, onToggle, disabled}: toggleSwitchProps) {
 
     return (
     <>

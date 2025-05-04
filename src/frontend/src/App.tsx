@@ -15,6 +15,7 @@ import SidebarNew from "./pages/sidebar/Sidebar";
 import {NavBar} from "./pages/navbar/NavBar";
 import AuthProvider, {useAuth} from "./components/AuthProvider";
 import user from "./pages/User";
+import WebsiteRoleManagement from "./pages/WebsiteRoleManagement";
 
 
 const queryClient = new QueryClient();
@@ -62,6 +63,10 @@ function App() {
                             <Route
                                 path="/listsedit"
                                 element={<AdminAuthorizedRoute element={<ListEdit />} />}
+                            />
+                            <Route
+                                path={"/website-roles"}
+                                element={<AdminAuthorizedRoute element={<WebsiteRoleManagement/>} />}
                             />
                         </Routes>
                     </div>

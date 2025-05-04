@@ -10,8 +10,9 @@
     "url": "https://github.com/mrkaland95/Squad-whitelist-web-server.git"
   },
   "workspaces": [
-    "backend",
-    "frontend"
+    "src/backend",
+    "src/frontend",
+    "src/shared"
   ],
   "keywords": [
     "Squad",

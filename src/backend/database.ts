@@ -2,50 +2,18 @@ import * as mongoose from "mongoose";
 import { Document } from "mongoose";
 import {defaultLogger} from "./logger";
 import {randomUUID} from "node:crypto";
-import {DiscordRole, ListEndpoint, PermissionMapping, WebsitePermissions, WebsiteRole} from "../shared/shared-types";
+import {
+    DiscordRole,
+    InGameAdminPermissions,
+    ListEndpoint,
+    PermissionMapping,
+    WebsitePermissions,
+    WebsiteRole
+} from "../frontend/src/shared/shared-types";
+import {WeekDays} from "frontend/src/utils/utils";
 
 
-/*
-Pulled and defined from:
-https://squad.fandom.com/wiki/Server_Administration
- */
-export enum InGameAdminPermissions {
-    CHANGE_MAP = "changemap",
-    CAN_SEE_ADMIN_CHAT = "canseeadminchat",
-    BALANCE = "balance",
-    PAUSE = "pause",
-    CHEAT = "cheat",
-    PRIVATE = "private",
-    CAN_USE_ADMIN_CHAT = "chat",
-    KICK = "kick",
-    BAN = "ban",
-    CONFIG = "config",
-    IMMUNE = "immune",
-    MANAGE_SERVER = "manageserver",
-    CAMERAMAN = "cameraman",
-    FEATURE_TEST = "featuretest",
-    FORCE_TEAM_CHANGE = "forceteamchange",
-    RESERVE = "reserve",
-    DEBUG = "debug",
-    TEAM_CHANGE = "teamchange"
-}
-
-/*
-A week day corresponding to a number, particularly to inbuilt Javascript
-Date.getDay() method.
- */
-export enum WeekDays {
-    Sunday = 0,
-    Monday = 1,
-    Tuesday = 2,
-    Wednesday = 3,
-    Thursday = 4,
-    Friday = 5,
-    Saturday = 6
-}
-
-
-export interface IDiscordUser extends Document {
+export interface DiscordGuildUser extends Document {
     DiscordID: string;
     DiscordName: string;
     Roles: string[];
@@ -90,7 +58,7 @@ export interface IAPIKey extends Document {
 
 
 /*
-ListName: Represents the name of an endpoint to retrieve a last, i.e. /lists/:ListName
+ListName: Represents the name of an endpoint to retrieve a last, i.e., /lists/:ListName
 AdminGroups: The in game admin groups that a list will use.
 */
 
@@ -121,7 +89,7 @@ const apiSchema = new mongoose.Schema({
 /**
  *
  */
-const discordUserSchema = new mongoose.Schema<IDiscordUser>({
+const discordUserSchema = new mongoose.Schema<DiscordGuildUser>({
     DiscordID: { type: String, unique: true, required: true },
     // TODO add a separate field for globalname.
     DiscordName: { type: String, required: true },
@@ -205,7 +173,7 @@ const loggingSchema = new mongoose.Schema<ILog>({
 )
 // Represents roles and permission for performing tasks on the website.
 const websiteRoleSchema = new mongoose.Schema<IWebsiteRole>({
-    roleID: { type: String, required: true, unique: true, default: randomUUID },
+    roleID: { type: String, required: true, unique: true },
     roleName: { type: String, required: true, unique: true },
     permissions: {
         type: [String],
@@ -216,7 +184,7 @@ const websiteRoleSchema = new mongoose.Schema<IWebsiteRole>({
             message: props => `${props.value} contains invalid permissions.`,
         },
     },
-    description: { type: String, required: true },
+    description: { type: String, required: false },
 }, {
     timestamps: true
 })
@@ -224,7 +192,8 @@ const websiteRoleSchema = new mongoose.Schema<IWebsiteRole>({
 const discordRoleToWebsiteRoleBindingSchema = new mongoose.Schema<IPermissionMapping>({
     permissionID: { type: String, required: true, unique: true },
     discordRoleID: { type: String, required: true, unique: true },
-    mappedWebsiteRole: { type: websiteRoleSchema, required: true },
+    discordRoleName: { type: String, required: true, unique: true },
+    mappedWebsiteRole: { type: mongoose.Schema.Types.ObjectId, ref: 'WebsiteRoles', required: false },
 }, {
     timestamps: true,
 })
@@ -237,8 +206,8 @@ export const APIKeysDB = mongoose.model('APIKeys', apiSchema)
 export const LoggingDB = mongoose.model('Logs', loggingSchema)
 export const AllServerRolesDB = mongoose.model('AllServerRoles', allServerRolesSchema)
 export const ListsDB = mongoose.model('Lists', listSchema)
-export const WebsiteRolesDB = mongoose.model('WebsiteRoles', discordRoleToWebsiteRoleBindingSchema)
-export const DiscordRoleToWebsiteRoleDB = mongoose.model('WebsiteRoles', discordRoleToWebsiteRoleBindingSchema)
+export const WebsiteRolesDB = mongoose.model('WebsiteRoles', websiteRoleSchema)
+export const DiscordRoleToWebsiteRoleDB = mongoose.model('MappedRoles', discordRoleToWebsiteRoleBindingSchema)
 
 export async function initializeWhitelistGroup() {
     try {

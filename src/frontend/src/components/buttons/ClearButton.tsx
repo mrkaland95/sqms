@@ -1,4 +1,4 @@
-import './clear-button.css'
+import './css/clear-button.css'
 import React from "react";
 /*
 Represents a button used for clearing a row of data.

@@ -24,7 +24,7 @@ export default function AddRoleDropdown(props: dropDownProps) {
         <div style={{display: "inline-block"}}>
             <div className={`add-role-dropdown-wrapper ${menuOpen ? 'open': ''}`} ref={dropdownRef}>
                 <button
-                    className={"default-button"}
+                    className={"basic-button-1"}
                     onClick={toggleMenu}
                     type={"button"}
                 >

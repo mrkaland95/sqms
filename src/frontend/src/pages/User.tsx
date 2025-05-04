@@ -3,9 +3,9 @@ import axios from "axios";
 import {steamID64Regex} from "../utils/utils";
 import Swal from "sweetalert2";
 import steamLogo from '../public/steam-icon-wide.png'
-import {getAdminGroups, getUserSteamID, postUserSteamID} from "../utils/fetch";
+import {getAdminGroups, getUserSteamID, postUserSteamID} from "../utils/data-fetch";
 import {useQuery} from "@tanstack/react-query";
-import {DiscordServerUser, UserResponseData} from "../../../shared/shared-types";
+import {DiscordServerUser, UserResponseData} from "../shared/shared-types";
 
 
 axios.defaults.withCredentials = true

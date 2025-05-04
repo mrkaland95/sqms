@@ -1,6 +1,6 @@
 import {NextFunction, response, Router} from "express";
 import env from "../load-env";
-import {DiscordUser} from "../utils/types";
+import {DiscordAPIUser} from "../utils/types";
 import {defaultLogger, Logger, LoggingLevel} from "../logger";
 import {accessTokenData, isAuthenticated, requestAccessToken, requestDiscordUserData} from "./utils/utils";
 import {getUsersFromCacheList, getUsersCacheMap, processWhitelistProps} from "../cache";
@@ -81,7 +81,7 @@ export async function loggingMiddleware(req: any, res: any, next: any) {
     // });
 
 
-    defaultLogger.debug(`_[${req.method} ${req.originalUrl}]_[${res.statusCode} - ${duration}ms]_[IP: ${ip}]_[User-Agent: ${req.headers['user-agent']}]`)
+    defaultLogger.debug(`[${req.method} ${req.originalUrl}]_[${res.statusCode} - ${duration}ms]_[IP: ${ip}]_[User-Agent: ${req.headers['user-agent']}]`)
     next()
 }
 

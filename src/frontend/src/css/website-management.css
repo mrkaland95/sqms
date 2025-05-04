@@ -1,0 +1,99 @@
+
+.website-role-management-list {
+  border-color: #FFFFFF;
+  border-width: 1px;
+  border-radius: 5px;
+  background: #1c618f;
+  padding: 1rem;
+}
+
+.website-role-management-list li {
+  list-style: none;
+  display: flex;
+}
+
+.website-role-permissions-selector {
+
+}
+
+.permissions-container {
+  padding: 1rem;
+}
+
+.top-toggle {
+  background: none;
+  color: #FFFFFF;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.arrow.open {
+  transform: rotate(90deg);
+}
+
+.permissions-selector {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  padding-left: 1rem;
+  border-left: 2px solid #ccc;
+  margin-left: 0.5rem;
+}
+.permissions-selector.open {
+  max-height: 1000px;
+}
+
+.permission-category {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.category-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.category-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.category-content.open {
+  max-height: 1000px;
+}
+
+.permission-list {
+  list-style: none;
+  padding-left: 0.5rem;
+  margin: 0;
+}
+
+.permission-item {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.tree-line {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  width: 10px;
+  height: 100%;
+  border-left: 2px solid #aaa;
+}

@@ -1,17 +1,18 @@
 import {
+    DiscordGuildUser,
+    DiscordRoleToWebsiteRoleDB,
     DiscordUsersDB,
     IAdminGroup,
-    IDiscordRole,
-    IDiscordUser,
     IListEndpoint,
     IPrivilegedRole,
     ListsDB,
     RolesDB
 } from "./database";
 import {Client, GatewayIntentBits, GuildMember} from "discord.js";
-import {Logger, LoggingLevel} from "./logger";
+import {defaultLogger, Logger, LoggingLevel} from "./logger";
 import env from "./load-env";
-import {DiscordRole} from "../shared/shared-types";
+import {DiscordRole, WebsitePermissions} from "../frontend/src/shared/shared-types";
+import loadEnv from "./load-env";
 
 /*
 File responsible for handling caches of data, and initializing the discord and database clients.
@@ -20,7 +21,7 @@ TODO might want to factor out the initialization of discord and db to somewhere 
 
 const logger = new Logger(LoggingLevel.DEBUG)
 
-let usersCache: Map<string, IDiscordUser> = new Map()
+let usersCache: Map<string, DiscordGuildUser> = new Map()
 let listsCache: Map<string, string> = new Map()
 export let allDiscordRolesCache: DiscordRole[] = []
 
@@ -47,7 +48,7 @@ export async function refreshUsersCache(userData = null) {
 }
 
 
-export async function generateLists(listsData: IListEndpoint[], rolesData: IPrivilegedRole[], usersData: IDiscordUser[]) {
+export async function generateLists(listsData: IListEndpoint[], rolesData: IPrivilegedRole[], usersData: DiscordGuildUser[]) {
     const listsMap = new Map<string, string>()
 
     for (const lData of listsData) {
@@ -67,18 +68,19 @@ export async function generateLists(listsData: IListEndpoint[], rolesData: IPriv
  *
  * For example, if a list has admin group "X" assigned to it,
  * then all users with a discord role that also has admin group "X"
- * assigned to it, will get their adminID added to the list endpoint, provided they have an adminID installed.
+ * assigned to it will get their adminID added to the list endpoint,
+ * provided they have an adminID installed.
 
  * Additionally, if the list endpoint has the admin grouped marked with the "isWhitelistGroup" flag,
- * Then all users with roles that has whitelist slots will have their white
+ * Then all users with roles that have whitelist slots will have their white
  *
  *
  * @param listData {IListEndpoint}
  * @param rolesData {IPrivilegedRole[]}
- * @param usersData {IDiscordUser[]}
+ * @param usersData {DiscordGuildUser[]}
  */
-async function constructListFile(listData: IListEndpoint, rolesData: IPrivilegedRole[], usersData: IDiscordUser[]) {
-    let fBuffer: string[] = []
+async function constructListFile(listData: IListEndpoint, rolesData: IPrivilegedRole[], usersData: DiscordGuildUser[]) {
+    let fileBuffer: string[] = []
     let whitelistGroup: IAdminGroup | null = null
     let validDiscordRoles: IPrivilegedRole[] = []
     for (const group of listData.AdminGroups) {
@@ -97,7 +99,7 @@ async function constructListFile(listData: IListEndpoint, rolesData: IPrivileged
         }
 
         let permissions = group.Permissions.join(",")
-        fBuffer.push(`Group=${group.GroupName}:${permissions}`)
+        fileBuffer.push(`Group=${group.GroupName}:${permissions}`)
     }
 
 
@@ -126,7 +128,7 @@ async function constructListFile(listData: IListEndpoint, rolesData: IPrivileged
             for (const role of usersValidRoles) {
                 // Explicitly check against false, because we don't want to add the user if the "admingroup" is undefined.
                 if (role?.AdminGroup?.IsWhitelistGroup === false) {
-                    fBuffer.push(`Admin=${user.UserID64.steamID}:${role.AdminGroup.GroupName} // ${user.DiscordName}`)
+                    fileBuffer.push(`Admin=${user.UserID64.steamID}:${role.AdminGroup.GroupName} // ${user.DiscordName}`)
                 }
             }
         }
@@ -142,13 +144,13 @@ async function constructListFile(listData: IListEndpoint, rolesData: IPrivileged
             for (let i = 0; i < whitelistProps.WhitelistSlots; i++) {
                 let id = user.Whitelist64IDs[i]?.steamID
                 if (id) {
-                    fBuffer.push(`Admin=${id}:${whitelistGroup.GroupName} // Originator: ${user.DiscordName}`)
+                    fileBuffer.push(`Admin=${id}:${whitelistGroup.GroupName} // Originator: ${user.DiscordName}`)
                 }
             }
         }
     }
 
-    return fBuffer.join('\r\n')
+    return fileBuffer.join('\r\n')
 }
 
 
@@ -157,7 +159,7 @@ async function constructListFile(listData: IListEndpoint, rolesData: IPrivileged
  */
 export async function refreshListCache() {
     // TODO use the caches instead here.
-    logger.debug('Refreshing lists endpoint cache...')
+    defaultLogger.debug('Refreshing lists endpoint cache...')
 
     // TODO swap to using cache.
     const usersData = await DiscordUsersDB.find()
@@ -170,9 +172,9 @@ export async function refreshListCache() {
 }
 
 
-export function getUsersFromCacheList(activeUsersOnly: boolean = true): IDiscordUser[] {
+export function getUsersFromCacheList(activeUsersOnly: boolean = true): DiscordGuildUser[] {
     const usersValues = usersCache.values()
-    let users: IDiscordUser[]
+    let users: DiscordGuildUser[]
 
     if (activeUsersOnly) {
         users = Array.from(usersValues).filter(user => user.Enabled)
@@ -184,7 +186,7 @@ export function getUsersFromCacheList(activeUsersOnly: boolean = true): IDiscord
 }
 
 export function getUsersCacheMap(activeUsers: boolean = true) {
-    let users: Map<string, IDiscordUser> = new Map()
+    let users: Map<string, DiscordGuildUser> = new Map()
 
     if (activeUsers) {
         usersCache.forEach(user => {
@@ -217,7 +219,7 @@ async function retrieveAllDiscordMembers() {
             allDiscordMembers.push(...members.values())
         }
     } catch (e) {
-        logger.error(`Discord client was unable to retrieve guilds.`)
+        defaultLogger.error(`Discord client was unable to retrieve guilds.`)
     }
 
     return allDiscordMembers
@@ -239,7 +241,7 @@ async function retrieveMembersFromGuild(guildID: string) {
         }
 
     } catch (e) {
-        logger.error(`Discord client was unable to retrieve members from guild ${guildID}`)
+        defaultLogger.error(`Discord client was unable to retrieve members from guild ${guildID}`)
     }
 
     return discordMembers
@@ -272,8 +274,8 @@ export async function refreshDiscordRoles(guildID: string): Promise<DiscordRole[
 
 
 // Meant to be a rough analogue of the "performScrub" function of the old whitelist server.
-export async function refreshDiscordUsersAndRoles(disableUsersNoLongerInGuild: boolean = true) {
-    logger.debug('Performing scrub of users...')
+export async function refreshDiscordGuildUsers(disableUsersNoLongerInGuild: boolean = true) {
+    defaultLogger.debug('Performing scrub of users...')
     const members = await retrieveMembersFromGuild(env.discordGuildID)
     const enabledUsersIDs: string[] = []
     for (const member of members) {
@@ -286,14 +288,16 @@ export async function refreshDiscordUsersAndRoles(disableUsersNoLongerInGuild: b
         }, {
             DiscordID: member.id, DiscordName: name, Roles: memberRoles, Enabled: true
         }, {
-            upsert: true, runValidators: true
+            upsert: true,
+            runValidators: true
         }).exec()
     }
 
     if (disableUsersNoLongerInGuild) {
-        // Find the users that are currently enabled, but shouldn't be.
+        // Find the users that are currently enabled but shouldn't be.
         let usersToScrub = await DiscordUsersDB.find({DiscordID: {$nin: enabledUsersIDs}, Enabled: true})
-        // Disables inactive users.
+
+        // Disable inactive users.
         for (const user of usersToScrub) {
             await DiscordUsersDB.findOneAndUpdate({
                 DiscordID: user.DiscordID
@@ -318,7 +322,7 @@ export async function getAllUsersWithSpecialRoles() {
     // A role is considered privileged/special if it has an admin group.
     privilegedRoles = privilegedRoles.filter(role => role?.AdminGroup)
 
-    const specialUsers: IDiscordUser[] = []
+    const specialUsers: DiscordGuildUser[] = []
     for (const user of usersCache.values()) {
         if (!user.Enabled) continue
 
@@ -337,19 +341,45 @@ export async function getAllUsersWithSpecialRoles() {
 
 /**
  * Filters out the roles that a user has that are valid for a specific list.
- * @param user {IDiscordUser}
+ * @param user {DiscordGuildUser}
  * @param allValidRoles {IPrivilegedRole[]}
  * @return {IPrivilegedRole[]}
  */
-function getUsersValidRoles(user: IDiscordUser, allValidRoles: IPrivilegedRole[]): IPrivilegedRole[] {
+function getUsersValidRoles(user: DiscordGuildUser, allValidRoles: IPrivilegedRole[]): IPrivilegedRole[] {
     return allValidRoles.filter(role => {
         return user.Roles.includes(role.RoleID)
     })
 }
 
 
+/**
+ * Retrieves the permissions a user has on the website/backend based on their discord roles.
+ * @param user
+ */
+export async function getDiscordUsersWebsitePermissions (user: DiscordGuildUser) {
+    const allPermissions: WebsitePermissions[] = []
 
-function generateAdminPermissionString(user: IDiscordUser) {
+    // User is a "superadmin", they have all permissions on the website.
+    if (user.Roles.includes(loadEnv.discordRolesAuthorizedForAdmin)) {
+        allPermissions.push(WebsitePermissions.ADMINISTRATOR)
+    }
+    else {
+        const userWebsiteRoles = await DiscordRoleToWebsiteRoleDB.find({
+            DiscordRoleID: {$in: user.Roles}
+        })
+        for (const role of userWebsiteRoles) {
+            if (role?.mappedWebsiteRole) {
+                allPermissions.push(...role.mappedWebsiteRole.permissions)
+            }
+        }
+    }
+
+    return allPermissions
+}
+
+
+
+function generateAdminPermissionString(user: DiscordGuildUser) {
 
 }
 
@@ -360,7 +390,7 @@ function generateAdminPermissionString(user: IDiscordUser) {
  * @param user
  * @param discordRoles
  */
-export function processWhitelistProps(user: IDiscordUser, discordRoles: IPrivilegedRole[]) {
+export function processWhitelistProps(user: DiscordGuildUser, discordRoles: IPrivilegedRole[]) {
     let userProps: IUserProps = { WhitelistSlots: 0, WhitelistActiveDays: []}
 
     for (const userRoleID of user.Roles) {
